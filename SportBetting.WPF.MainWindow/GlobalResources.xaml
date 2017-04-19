@@ -1,0 +1,14 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:MainWpfWindow">
+    <LinearGradientBrush x:Key="LightBlueToDarkBluer_LinearGradientBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0" Color="#7CBCF9" />
+        <GradientStop Offset="1" Color="#2A62B7" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="SilverToBlack_LinearGradientBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0" Color="#707070" />
+        <GradientStop Offset="1" Color="#272727" />
+    </LinearGradientBrush>
+    
+</ResourceDictionary>

@@ -1,0 +1,148 @@
+﻿<Window x:Class="MainWpfWindow.Views.StartWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:converters="clr-namespace:SportBetting.WPF.Prism.Shared.Converters;assembly=SportBetting.WPF.Prism.Shared"
+        AutomationProperties.AutomationId="StartWindow"
+        SizeToContent="Manual"
+        Topmost="True"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized"
+        WindowStyle="None">
+
+    <!--  Resources  -->
+    <Window.Background>
+        <ImageBrush ImageSource="{converters:ResolveImagePath Path=StartPage/start.jpg}" Stretch="Fill" ></ImageBrush>
+    </Window.Background>
+    <Window.Resources>
+
+
+        <Style x:Key="normalText" TargetType="{x:Type TextBlock}">
+            <Setter Property="FontFamily" Value="Myriad Prp" />
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="#FFEFEFEF" />
+            <Setter Property="LineHeight" Value="18" />
+            <Setter Property="LineStackingStrategy" Value="BlockLineHeight" />
+            <Setter Property="TextAlignment" Value="Left" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+
+    </Window.Resources>
+
+    <Window.Triggers>
+
+        <!--<EventTrigger RoutedEvent="FrameworkElement.Loaded">
+            <BeginStoryboard Storyboard="{StaticResource Slide1}" />
+            <BeginStoryboard Storyboard="{StaticResource Slide2}" />
+            <BeginStoryboard Storyboard="{StaticResource Slide3}" />
+        </EventTrigger>-->
+
+    </Window.Triggers>
+
+    
+        <Grid>
+            <Grid.LayoutTransform>
+            <ScaleTransform x:Name="ApplicationScaleTransform"
+                        CenterX="0"
+                        CenterY="0"
+                        ScaleX="{Binding ChangeTracker.Screen2WindowScale}"
+                        ScaleY="{Binding ChangeTracker.Screen2WindowScale}" />
+        </Grid.LayoutTransform>
+            <Grid.Background>
+                <ImageBrush AlignmentX="Left"
+                            AlignmentY="Top"
+                            
+                            TileMode="Tile"
+                            Viewport="0,0,3,3"
+                            ViewportUnits="Absolute"
+                            Stretch="None"
+                             />
+            </Grid.Background>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="1"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Center">
+                <TextBlock Margin="0,0,0,125"
+                                   x:Name="txtMessage"
+                                   HorizontalAlignment="Stretch"
+                                   VerticalAlignment="Center"
+                                   FontFamily="Play"
+                                   FontSize="18"
+                                   Foreground="#FFBFBBB5"
+                                   Text=""
+                                   TextAlignment="Center"
+                                   TextWrapping="WrapWithOverflow" />
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="1"
+                        HorizontalAlignment="Stretch"
+                                   VerticalAlignment="Center"
+                                   FontFamily="Play"
+                                   FontSize="18"
+                                   Foreground="#FFBFBBB5"
+                                   Text=""
+                                   TextAlignment="Center"
+                                   TextWrapping="WrapWithOverflow">                    
+                Please wait...
+            </TextBlock>
+            <Button Grid.Row="3"
+                        Grid.Column="3"
+                    Height="75"
+                    Width="75"
+                        VerticalAlignment="Center"
+                        Command="{Binding SendLogsCommand}"
+                        IsEnabled="{Binding EnabledSendLogs}"
+                        
+                      >
+                <Button.Effect>
+                    <DropShadowEffect ShadowDepth="10"/>
+                </Button.Effect>
+                <Button.Template>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid>
+                            <Ellipse >
+                                <Ellipse.Fill>
+                                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                        <GradientStop Color="#FFAEAEAE" Offset="0"/>
+                                        <GradientStop Color="#FF303030" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Ellipse.Fill>
+                            </Ellipse>
+                            <Viewbox StretchDirection="DownOnly">
+                                <TextBlock Style="{StaticResource normalText}" >Export <LineBreak/> Logs</TextBlock>
+                            </Viewbox>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect ShadowDepth="0"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+        </Grid>
+    </Grid>
+    
+</Window>

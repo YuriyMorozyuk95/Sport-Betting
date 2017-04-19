@@ -1,0 +1,2543 @@
+﻿<UserControl x:Class="DefaultViews.Views.BasketView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converters="clr-namespace:SportBetting.WPF.Prism.Converters;assembly=SportBetting.WPF.Prism.Shared"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:gl="clr-namespace:System.Globalization;assembly=mscorlib"
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             xmlns:l="clr-namespace:TranslationByMarkupExtension;assembly=TranslationByMarkupExtension"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:shared="clr-namespace:SportBetting.WPF.Prism.Shared;assembly=SportBetting.WPF.Prism.Shared"
+             xmlns:shared1="clr-namespace:Shared;assembly=Shared"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
+             xmlns:viewModels2="clr-namespace:ViewModels.ViewModels;assembly=ViewModels"
+             xmlns:viewObjects="clr-namespace:SportRadar.DAL.ViewObjects;assembly=DAL"
+             xmlns:views2="clr-namespace:DefaultViews.Views"
+             xmlns:wpf="clr-namespace:SportBetting.WPF.Prism.Shared.Converters;assembly=SportBetting.WPF.Prism.Shared"
+             xmlns:wpfHelp="clr-namespace:SportBetting.WPF.Prism.WpfHelper;assembly=SportBetting.WPF.Prism.Shared"
+             AutomationProperties.AutomationId="BasketView"
+             Background="Transparent"
+             SnapsToDevicePixels="True"
+             d:DataContext="{d:DesignInstance Type=viewModels2:BasketViewModel}"
+             d:DesignHeight="1900"
+             d:DesignWidth="1050"
+             mc:Ignorable="d">
+
+
+    <UserControl.Resources>
+        <converters:MultiBooleanANDToVisibilityConverter x:Key="myMultyBooleanToVisibilityConverter" />
+        <shared:BiggerThanToBooleanConverter x:Key="BiggerThanToBooleanConverter" />
+        <converters:MultiBooleanConverter x:Key="myMultyBooleanConverter" />
+        <converters:BasketSportBreadcrumbsConverter x:Key="myBasketSportBreadcrumbsConverter" />
+        <shared:BooleanToVisibilityCollapsedConverter x:Key="myBooleanToVisibilityConverter" />
+        <shared:InverseBooleanToVisibilityCollapsedConverter x:Key="myInverseBooleanToVisibilityConverter" />
+
+        <converters:ShowBasketWheelConvertor1 x:Key="ShowBigListButtons" />
+        <converters:ShowBasketWheelConvertor2 x:Key="ShowSmallListButtons" />
+        
+        <Storyboard x:Key="StakeUpdatedStoryboard">
+            <ColorAnimation AutoReverse="True"
+                            Duration="0:0:0.5"
+                            Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)"
+                            To="#FFFF4D00" />
+        </Storyboard>
+
+
+        <!--  numeric button template  -->
+        <Style x:Key="numericButton" TargetType="{x:Type Button}">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="Width" Value="68" />
+            <Setter Property="Height" Value="68" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <!--<Setter Property="Foreground" Value="#ffffffff" />-->
+            <Setter Property="FontSize" Value="22" />
+            <Setter Property="FontFamily" Value="Play" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <DockPanel
+                                   Width="{TemplateBinding Width}"
+                                   LastChildFill="True">
+                            <Image x:Name="dpnlLeft"
+                                   DockPanel.Dock="Left"
+                                   Source="{wpf:ResolveImagePath Path=BasketView/basket-buton-5-left.png}" />
+                            <Image x:Name="dpnlRight"
+                                   DockPanel.Dock="Right"
+                                   Source="{wpf:ResolveImagePath Path=BasketView/basket-buton-5-right.png}" />
+
+                            <DockPanel LastChildFill="True" x:Name="dpnlContent">
+                                <DockPanel.Background>
+                                    <ImageBrush ImageSource="{wpf:ResolveImagePath Path=BasketView/basket-buton-5-center.png}" />
+                                </DockPanel.Background>
+                                <ContentPresenter Margin="{TemplateBinding Padding}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              RecognizesAccessKey="True"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            </DockPanel>
+                        </DockPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="dpnlContent" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=BasketView/basket-buton-5-center-.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlLeft" Property="Source" Value="{wpf:ResolveImagePath Path=BasketView/basket-buton-5-left-.png}" />
+                                <Setter TargetName="dpnlRight" Property="Source" Value="{wpf:ResolveImagePath Path=BasketView/basket-buton-5-right-.png}" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="dpnlContent" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=BasketView/basket-buton-6-center.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlLeft" Property="Source" Value="{wpf:ResolveImagePath Path=BasketView/basket-buton-6-left.png}" />
+                                <Setter TargetName="dpnlRight" Property="Source" Value="{wpf:ResolveImagePath Path=BasketView/basket-buton-6-right.png}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+        <Style x:Key="orangeButton" TargetType="{x:Type Button}">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Padding" Value="10,0,10,0" />
+            
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid Name="Container"  >
+                            <Grid.Background>
+                                <ImageBrush ImageSource="{wpf:ResolveImagePath Path=BasketView/basket-buton-3.png}" Stretch="Fill"/>
+                            </Grid.Background>
+                            <ContentPresenter Margin="{TemplateBinding Padding}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              RecognizesAccessKey="True"
+                                              MaxWidth="100"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Container" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=BasketView/basket-buton-3-.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="CloseButton" TargetType="{x:Type Button}">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <DockPanel x:Name="dpnlContent"
+                                   Width="{TemplateBinding Width}"
+                                   LastChildFill="True">
+                            <DockPanel.Background>
+                                <ImageBrush ImageSource="{wpf:ResolveImagePath Path=ExtraLargeBreadcrumbsCenter.png}" />
+                            </DockPanel.Background>
+                            <Image x:Name="dpnlLeft"
+                                   DockPanel.Dock="Left"
+                                   Source="{wpf:ResolveImagePath Path=ExtraLargeBreadcrumbsLeft.png}" />
+                            <Image x:Name="dpnlRight"
+                                   DockPanel.Dock="Right"
+                                   Source="{wpf:ResolveImagePath Path=ExtraLargeBreadcrumbsRight.png}" />
+
+                            <ContentPresenter Margin="{TemplateBinding Padding}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              RecognizesAccessKey="True"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        </DockPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="dpnlContent" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=ExtraLargePressButtonDownCenter.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlLeft" Property="Source" Value="{wpf:ResolveImagePath Path=ExtraLargePressButtonDownLeft.png}" />
+                                <Setter TargetName="dpnlRight" Property="Source" Value="{wpf:ResolveImagePath Path=ExtraLargePressButtonDownRight.png}" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="dpnlContent" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=PressButtonDownCenter.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlLeft" Property="Source" Value="{wpf:ResolveImagePath Path=PressButtonDownLeft.png}" />
+                                <Setter TargetName="dpnlRight" Property="Source" Value="{wpf:ResolveImagePath Path=PressButtonDownRight.png}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+        <Style x:Key="navigationButton">
+            <Setter Property="Button.FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Button.HorizontalContentAlignment" Value="Center" />
+            <Setter Property="Button.VerticalContentAlignment" Value="Center" />
+            <Setter Property="Button.Padding" Value="10,0,10,0" />
+            <Setter Property="Button.Height" Value="60" />
+            <Setter Property="Button.SnapsToDevicePixels" Value="True" />
+            <Setter Property="Button.Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <DockPanel x:Name="dpnlContent"
+                                   Width="{TemplateBinding Width}"
+                                   LastChildFill="True">
+                            <DockPanel.Background>
+                                <ImageBrush ImageSource="{wpf:ResolveImagePath Path=BasketView/button.png}" />
+                            </DockPanel.Background>
+
+                          
+                            <ContentPresenter Margin="{TemplateBinding Padding}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              RecognizesAccessKey="True"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        </DockPanel>
+                        <!--<ControlTemplate.Triggers>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="dpnlContent" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=PressedBreadcrumbsButtonCenter.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlLeft" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=PressedBreadcrumbsButtonLeft.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlRight" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=PressedBreadcrumbsButtonRight.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="dpnlContent" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=PressButtonDownCenter.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlLeft" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=PressButtonDownLeft.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlRight" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=PressButtonDownRight.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>-->
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+
+
+        <!--  up button template  -->
+        <Style x:Key="upButton" TargetType="{x:Type Button}">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <DockPanel x:Name="dpnlContent"
+                                   Width="{TemplateBinding Width}"
+                                   LastChildFill="True">
+                            <DockPanel.Background>
+                                <ImageBrush ImageSource="{wpf:ResolveImagePath Path=UpButtonWheelCenter.png}" />
+                            </DockPanel.Background>
+
+                            <DockPanel x:Name="dpnlLeft"
+                                       Width="3"
+                                       DockPanel.Dock="Left">
+                                <DockPanel.Background>
+                                    <ImageBrush ImageSource="{wpf:ResolveImagePath Path=UpButtonWheelLeft.png}" />
+                                </DockPanel.Background>
+                            </DockPanel>
+                            <DockPanel x:Name="dpnlRight"
+                                       Width="3"
+                                       DockPanel.Dock="Right">
+                                <DockPanel.Background>
+                                    <ImageBrush ImageSource="{wpf:ResolveImagePath Path=UpButtonWheelRight.png}" />
+                                </DockPanel.Background>
+                            </DockPanel>
+                            <ContentPresenter Margin="{TemplateBinding Padding}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              RecognizesAccessKey="True"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        </DockPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="dpnlContent" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=PressButtonDownCenter.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlLeft" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=PressButtonDownLeft.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlRight" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=PressButtonDownRight.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="dpnlContent" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=PressButtonDownCenter.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlLeft" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=PressButtonDownLeft.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlRight" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=PressButtonDownRight.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!--  down button template  -->
+        <Style x:Key="downButton" TargetType="{x:Type Button}">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <DockPanel x:Name="dpnlContent"
+                                   Width="{TemplateBinding Width}"
+                                   LastChildFill="True">
+                            <DockPanel.Background>
+                                <ImageBrush ImageSource="{wpf:ResolveImagePath Path=DownButtonWheelCenter.png}" />
+                            </DockPanel.Background>
+
+                            <DockPanel x:Name="dpnlLeft"
+                                       Width="3"
+                                       DockPanel.Dock="Left">
+                                <DockPanel.Background>
+                                    <ImageBrush ImageSource="{wpf:ResolveImagePath Path=DownButtonWheelLeft.png}" />
+                                </DockPanel.Background>
+                            </DockPanel>
+                            <DockPanel x:Name="dpnlRight"
+                                       Width="3"
+                                       DockPanel.Dock="Right">
+                                <DockPanel.Background>
+                                    <ImageBrush ImageSource="{wpf:ResolveImagePath Path=DownButtonWheelRight.png}" />
+                                </DockPanel.Background>
+                            </DockPanel>
+                            <ContentPresenter Margin="{TemplateBinding Padding}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              RecognizesAccessKey="True"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        </DockPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="dpnlContent" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=PressButtonDownCenter.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlLeft" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=PressButtonDownLeft.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlRight" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=PressButtonDownRight.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="dpnlContent" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=PressButtonDownCenter.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlLeft" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=PressButtonDownLeft.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlRight" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=PressButtonDownRight.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!--  fix plus button template  -->
+        <Style x:Key="fixPlusButton" TargetType="{x:Type Button}">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Width" Value="150" />
+            <Setter Property="Height" Value="80" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="FontSize" Value="28" />
+            <Setter Property="FontFamily" Value="Play" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid>
+                            <DockPanel 
+                                       Width="{TemplateBinding Width}"
+                                       LastChildFill="True">
+                                <Image x:Name="dpnlLeft"
+                                       Width="12"
+                                       DockPanel.Dock="Left"
+                                       Source="{wpf:ResolveImagePath Path=NewDefaultViews/basket-buton-5-left.png}" />
+                                <Image x:Name="dpnlRight"
+                                       Width="12"
+                                       DockPanel.Dock="Right"
+                                       Source="{wpf:ResolveImagePath Path=NewDefaultViews/basket-buton-5-right.png}" />
+                                <DockPanel x:Name="dpnlContent" Margin="0,6">
+                                    <DockPanel.Background>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=NewDefaultViews/basket-buton-5-center.png}" />
+                                    </DockPanel.Background>
+                                </DockPanel>
+                            </DockPanel>
+                            <ContentPresenter Margin="{TemplateBinding Padding}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              RecognizesAccessKey="True"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="dpnlContent" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=NewDefaultViews/basket-buton-6-center-.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlLeft" Property="Source" Value="{wpf:ResolveImagePath Path=NewDefaultViews/basket-buton-6-left-.png}" />
+                                <Setter TargetName="dpnlRight" Property="Source" Value="{wpf:ResolveImagePath Path=NewDefaultViews/basket-buton-6-right-.png}" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="dpnlContent" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=NewDefaultViews/basket-buton-6-center.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlLeft" Property="Source" Value="{wpf:ResolveImagePath Path=NewDefaultViews/basket-buton-6-left.png}" />
+                                <Setter TargetName="dpnlRight" Property="Source" Value="{wpf:ResolveImagePath Path=NewDefaultViews/basket-buton-6-right.png}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!--  max bet button template  -->
+        <Style x:Key="maxBetButton" TargetType="{x:Type Button}">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Padding" Value="5,0,5,0" />
+            <Setter Property="Margin" Value="-1,0,0,0" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <DockPanel x:Name="dpnlContent"
+                                   Width="{TemplateBinding Width}"
+                                   LastChildFill="True">
+                            <DockPanel.Background>
+                                <ImageBrush ImageSource="{wpf:ResolveImagePath Path=MaxBetButtonCenter.png}"
+                                            Viewbox="0,0,1,80"
+                                            Viewport="0,0,1,80" />
+                            </DockPanel.Background>
+
+                            <Image x:Name="dpnlLeft"
+                                   DockPanel.Dock="Left"
+                                   Source="{wpf:ResolveImagePath Path=MaxBetButtonLeft.png}" />
+
+                            <Image x:Name="dpnlRight"
+                                   DockPanel.Dock="Right"
+                                   Source="{wpf:ResolveImagePath Path=MaxBetButtonRight.png}" />
+                            <ContentPresenter Margin="{TemplateBinding Padding}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              RecognizesAccessKey="True"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        </DockPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="dpnlContent" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=MaxBetButtonCenterDown.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlLeft" Property="Source" Value="{wpf:ResolveImagePath Path=FixPressButtonDownLeft.png}" />
+                                <Setter TargetName="dpnlRight" Property="Source" Value="{wpf:ResolveImagePath Path=FixPressButtonDownRight.png}" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="dpnlContent" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=PressButtonDownCenter.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlLeft" Property="Source" Value="{wpf:ResolveImagePath Path=FixPressButtonDownLeft.png}" />
+                                <Setter TargetName="dpnlRight" Property="Source" Value="{wpf:ResolveImagePath Path=FixPressButtonDownRight.png}" />
+
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!--Region RadioButton -->
+        
+        <!--  wheel upper button template  -->
+        <Style x:Key="wheelButton1" TargetType="{x:Type RadioButton}">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <!--<Setter Property="Padding" Value="5,0,5,0" />-->
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="Height" Value="55" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RadioButton}">
+                        <DockPanel Name="Container" Width="{TemplateBinding Width}"                              
+                                   LastChildFill="True">
+                            <Image x:Name="dpnlLeft"
+                                   DockPanel.Dock="Left"
+                                   Source="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-left.png}" />
+                            <Image x:Name="dpnlRight"
+                                   DockPanel.Dock="Right"
+                                   Source="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-right.png}" />
+
+                            <DockPanel x:Name="dpnlContent"
+                                   Width="{TemplateBinding Width}"
+                                   LastChildFill="True">
+                                <DockPanel.Background>
+                                    <ImageBrush ImageSource="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-center.png}" />
+                                </DockPanel.Background>
+                                <ContentPresenter Margin="{TemplateBinding Padding}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              RecognizesAccessKey="True"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            </DockPanel>
+                        </DockPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="dpnlContent" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-center-.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlLeft" Property="Source" Value="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-left-.png}" />
+                                <Setter TargetName="dpnlRight" Property="Source" Value="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-right-.png}" />
+                            </Trigger>
+                            <!--<DataTrigger Binding="{Binding WheelLine1.Text}" Value="{x:Null}">
+                                  <Setter TargetName="Container" Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>-->
+                            <DataTrigger Binding="{Binding WheelLine1}" Value="{x:Null}">
+                                <Setter TargetName="Container" Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="wheelButton2" TargetType="{x:Type RadioButton}">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <!--<Setter Property="Padding" Value="5,0,5,0" />-->
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="Height" Value="55" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RadioButton}">
+                        <DockPanel Name="Container" Width="{TemplateBinding Width}"                              
+                                   LastChildFill="True">
+                            <Image x:Name="dpnlLeft"
+                                   DockPanel.Dock="Left"
+                                   Source="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-left.png}" />
+                            <Image x:Name="dpnlRight"
+                                   DockPanel.Dock="Right"
+                                   Source="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-right.png}" />
+
+                            <DockPanel x:Name="dpnlContent"
+                                   Width="{TemplateBinding Width}"
+                                   LastChildFill="True">
+                                <DockPanel.Background>
+                                    <ImageBrush ImageSource="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-center.png}" />
+                                </DockPanel.Background>
+                                <ContentPresenter Margin="{TemplateBinding Padding}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              RecognizesAccessKey="True"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            </DockPanel>
+                        </DockPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="dpnlContent" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-center-.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlLeft" Property="Source" Value="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-left-.png}" />
+                                <Setter TargetName="dpnlRight" Property="Source" Value="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-right-.png}" />
+                            </Trigger>
+                            <!--<DataTrigger Binding="{Binding WheelLine2.Text}" Value="{x:Null}">
+                                <Setter TargetName="Container" Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>-->
+                            <DataTrigger Binding="{Binding WheelLine2}" Value="{x:Null}">
+                                <Setter TargetName="Container" Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="wheelButton3" TargetType="{x:Type RadioButton}">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <!--<Setter Property="Padding" Value="5,0,5,0" />-->
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="Height" Value="55" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RadioButton}">
+                        <DockPanel Name="Container" Width="{TemplateBinding Width}"                              
+                                   LastChildFill="True">
+                            <Image x:Name="dpnlLeft"
+                                   DockPanel.Dock="Left"
+                                   Source="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-left.png}" />
+                            <Image x:Name="dpnlRight"
+                                   DockPanel.Dock="Right"
+                                   Source="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-right.png}" />
+
+                            <DockPanel x:Name="dpnlContent"
+                                   Width="{TemplateBinding Width}"
+                                   LastChildFill="True">
+                                <DockPanel.Background>
+                                    <ImageBrush ImageSource="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-center.png}" />
+                                </DockPanel.Background>
+                                <ContentPresenter Margin="{TemplateBinding Padding}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              RecognizesAccessKey="True"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            </DockPanel>
+                        </DockPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="dpnlContent" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-center-.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlLeft" Property="Source" Value="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-left-.png}" />
+                                <Setter TargetName="dpnlRight" Property="Source" Value="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-right-.png}" />
+                            </Trigger>
+                            <DataTrigger Binding="{Binding WheelLine3.Text}" Value="null">
+                                <Setter TargetName="Container" Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding WheelLine3}" Value="{x:Null}">
+                                <Setter TargetName="Container" Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="wheelButton4" TargetType="{x:Type RadioButton}">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <!--<Setter Property="Padding" Value="5,0,5,0" />-->
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="Height" Value="55" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RadioButton}">
+                        <DockPanel Name="Container" Width="{TemplateBinding Width}"                              
+                                   LastChildFill="True">
+                            <Image x:Name="dpnlLeft"
+                                   DockPanel.Dock="Left"
+                                   Source="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-left.png}" />
+                            <Image x:Name="dpnlRight"
+                                   DockPanel.Dock="Right"
+                                   Source="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-right.png}" />
+
+                            <DockPanel x:Name="dpnlContent"
+                                   Width="{TemplateBinding Width}"
+                                   LastChildFill="True">
+                                <DockPanel.Background>
+                                    <ImageBrush ImageSource="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-center.png}" />
+                                </DockPanel.Background>
+                                <ContentPresenter Margin="{TemplateBinding Padding}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              RecognizesAccessKey="True"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            </DockPanel>
+                        </DockPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="dpnlContent" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-center-.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlLeft" Property="Source" Value="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-left-.png}" />
+                                <Setter TargetName="dpnlRight" Property="Source" Value="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-right-.png}" />
+                            </Trigger>
+                            <!--<DataTrigger Binding="{Binding WheelLine3.Text}" Value="{x:Null}">
+                                <Setter TargetName="Container" Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>-->
+                            <DataTrigger Binding="{Binding WheelLine4}" Value="{x:Null}">
+                                <Setter TargetName="Container" Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="wheelButton5" TargetType="{x:Type RadioButton}">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <!--<Setter Property="Padding" Value="5,0,5,0" />-->
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="Height" Value="55" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RadioButton}">
+                        <DockPanel Name="Container" Width="{TemplateBinding Width}"                              
+                                   LastChildFill="True">
+                            <Image x:Name="dpnlLeft"
+                                   DockPanel.Dock="Left"
+                                   Source="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-left.png}" />
+                            <Image x:Name="dpnlRight"
+                                   DockPanel.Dock="Right"
+                                   Source="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-right.png}" />
+
+                            <DockPanel x:Name="dpnlContent"
+                                   Width="{TemplateBinding Width}"
+                                   LastChildFill="True">
+                                <DockPanel.Background>
+                                    <ImageBrush ImageSource="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-center.png}" />
+                                </DockPanel.Background>
+                                <ContentPresenter Margin="{TemplateBinding Padding}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              RecognizesAccessKey="True"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            </DockPanel>
+                        </DockPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="dpnlContent" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-center-.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlLeft" Property="Source" Value="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-left-.png}" />
+                                <Setter TargetName="dpnlRight" Property="Source" Value="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-right-.png}" />
+                            </Trigger>
+                            <!--<DataTrigger Binding="{Binding WheelLine3.Text}" Value="{x:Null}">
+                                <Setter TargetName="Container" Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>-->
+                            <DataTrigger Binding="{Binding WheelLine5}" Value="{x:Null}">
+                                <Setter TargetName="Container" Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="wheelButton6" TargetType="{x:Type RadioButton}">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <!--<Setter Property="Padding" Value="5,0,5,0" />-->
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="Height" Value="55" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RadioButton}">
+                        <DockPanel Name="Container" Width="{TemplateBinding Width}"                              
+                                   LastChildFill="True">
+                            <Image x:Name="dpnlLeft"
+                                   DockPanel.Dock="Left"
+                                   Source="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-left.png}" />
+                            <Image x:Name="dpnlRight"
+                                   DockPanel.Dock="Right"
+                                   Source="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-right.png}" />
+
+                            <DockPanel x:Name="dpnlContent"
+                                   Width="{TemplateBinding Width}"
+                                   LastChildFill="True">
+                                <DockPanel.Background>
+                                    <ImageBrush ImageSource="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-center.png}" />
+                                </DockPanel.Background>
+                                <ContentPresenter Margin="{TemplateBinding Padding}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              RecognizesAccessKey="True"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            </DockPanel>
+                        </DockPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="dpnlContent" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-center-.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlLeft" Property="Source" Value="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-left-.png}" />
+                                <Setter TargetName="dpnlRight" Property="Source" Value="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-right-.png}" />
+                            </Trigger>
+                            <!--<DataTrigger Binding="{Binding WheelLine3.Text}" Value="{x:Null}">
+                                <Setter TargetName="Container" Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>-->
+                            <DataTrigger Binding="{Binding WheelLine6}" Value="{x:Null}">
+                                <Setter TargetName="Container" Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="wheelButton7" TargetType="{x:Type RadioButton}">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <!--<Setter Property="Padding" Value="5,0,5,0" />-->
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="Height" Value="55" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RadioButton}">
+                        <DockPanel Name="Container" Width="{TemplateBinding Width}"                              
+                                   LastChildFill="True">
+                            <Image x:Name="dpnlLeft"
+                                   DockPanel.Dock="Left"
+                                   Source="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-left.png}" />
+                            <Image x:Name="dpnlRight"
+                                   DockPanel.Dock="Right"
+                                   Source="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-right.png}" />
+
+                            <DockPanel x:Name="dpnlContent"
+                                   Width="{TemplateBinding Width}"
+                                   LastChildFill="True">
+                                <DockPanel.Background>
+                                    <ImageBrush ImageSource="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-center.png}" />
+                                </DockPanel.Background>
+                                <ContentPresenter Margin="{TemplateBinding Padding}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              RecognizesAccessKey="True"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            </DockPanel>
+                        </DockPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="dpnlContent" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-center-.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlLeft" Property="Source" Value="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-left-.png}" />
+                                <Setter TargetName="dpnlRight" Property="Source" Value="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-right-.png}" />
+                            </Trigger>
+                            <!--<DataTrigger Binding="{Binding WheelLine3.Text}" Value="{x:Null}">
+                                <Setter TargetName="Container" Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>-->
+                            <DataTrigger Binding="{Binding WheelLine7}" Value="{x:Null}">
+                                <Setter TargetName="Container" Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="wheelButton8" TargetType="{x:Type RadioButton}">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <!--<Setter Property="Padding" Value="5,0,5,0" />-->
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="Height" Value="55" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RadioButton}">
+                        <DockPanel Name="Container" Width="{TemplateBinding Width}"                              
+                                   LastChildFill="True">
+                            <Image x:Name="dpnlLeft"
+                                   DockPanel.Dock="Left"
+                                   Source="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-left.png}" />
+                            <Image x:Name="dpnlRight"
+                                   DockPanel.Dock="Right"
+                                   Source="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-right.png}" />
+
+                            <DockPanel x:Name="dpnlContent"
+                                   Width="{TemplateBinding Width}"
+                                   LastChildFill="True">
+                                <DockPanel.Background>
+                                    <ImageBrush ImageSource="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-center.png}" />
+                                </DockPanel.Background>
+                                <ContentPresenter Margin="{TemplateBinding Padding}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              RecognizesAccessKey="True"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            </DockPanel>
+                        </DockPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="dpnlContent" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-center-.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlLeft" Property="Source" Value="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-left-.png}" />
+                                <Setter TargetName="dpnlRight" Property="Source" Value="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-right-.png}" />
+                            </Trigger>
+                            <!--<DataTrigger Binding="{Binding WheelLine3.Text}" Value="{x:Null}">
+                                <Setter TargetName="Container" Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>-->
+                            <DataTrigger Binding="{Binding WheelLine8}" Value="{x:Null}">
+                                <Setter TargetName="Container" Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="wheelButton9" TargetType="{x:Type RadioButton}">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <!--<Setter Property="Padding" Value="5,0,5,0" />-->
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="Height" Value="55" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RadioButton}">
+                        <DockPanel Name="Container" Width="{TemplateBinding Width}"                              
+                                   LastChildFill="True">
+                            <Image x:Name="dpnlLeft"
+                                   DockPanel.Dock="Left"
+                                   Source="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-left.png}" />
+                            <Image x:Name="dpnlRight"
+                                   DockPanel.Dock="Right"
+                                   Source="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-right.png}" />
+
+                            <DockPanel x:Name="dpnlContent"
+                                   Width="{TemplateBinding Width}"
+                                   LastChildFill="True">
+                                <DockPanel.Background>
+                                    <ImageBrush ImageSource="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-center.png}" />
+                                </DockPanel.Background>
+                                <ContentPresenter Margin="{TemplateBinding Padding}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              RecognizesAccessKey="True"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            </DockPanel>
+                        </DockPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="dpnlContent" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-center-.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlLeft" Property="Source" Value="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-left-.png}" />
+                                <Setter TargetName="dpnlRight" Property="Source" Value="{wpf:ResolveImagePath Path=BasketView/basket-buton-8-right-.png}" />
+                            </Trigger>
+                            <!--<DataTrigger Binding="{Binding WheelLine3.Text}" Value="{x:Null}">
+                                <Setter TargetName="Container" Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>-->
+                            <DataTrigger Binding="{Binding WheelLine9}" Value="{x:Null}">
+                                <Setter TargetName="Container" Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <!--End Region-->
+
+        <!--  wheel middle button template  -->
+        <Style x:Key="wheelMiddleButton" TargetType="{x:Type Button}">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <!--<Setter Property="Padding" Value="5,0,5,0" />
+            <Setter Property="Margin" Value="0,0,0,0" />-->
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <DockPanel x:Name="dpnlContent"
+                                   Width="{TemplateBinding Width}"
+                                   Height="83"
+                                   LastChildFill="True">
+                            <DockPanel.Background>
+                                <ImageBrush ImageSource="{wpf:ResolveImagePath Path=MiddleButtonWheelCenter.png}" />
+                            </DockPanel.Background>
+
+                            <DockPanel x:Name="dpnlLeft"
+                                       Width="7"
+                                       Height="83"
+                                       DockPanel.Dock="Left">
+                                <DockPanel.Background>
+                                    <ImageBrush ImageSource="{wpf:ResolveImagePath Path=MiddleButtonWheelLeft.png}" />
+                                </DockPanel.Background>
+                            </DockPanel>
+                            <DockPanel x:Name="dpnlRight"
+                                       Width="8"
+                                       Height="83"
+                                       DockPanel.Dock="Right">
+                                <DockPanel.Background>
+                                    <ImageBrush ImageSource="{wpf:ResolveImagePath Path=MiddleButtonWheelRight.png}" />
+                                </DockPanel.Background>
+                            </DockPanel>
+                            <ContentPresenter Margin="{TemplateBinding Padding}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              RecognizesAccessKey="True"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        </DockPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="dpnlContent" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=PressButtonDownCenter.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlLeft" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=PressButtonDownLeft.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlRight" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=PressButtonDownRight.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="dpnlContent" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=PressButtonDownCenter.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlLeft" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=PressButtonDownLeft.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlRight" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=PressButtonDownRight.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!--  wheel lower button template  -->
+        <Style x:Key="wheelLowerButton" TargetType="{x:Type Button}">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <!--<Setter Property="Padding" Value="5,0,5,0" />
+            <Setter Property="Margin" Value="0,-54,0,0" />-->
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <DockPanel x:Name="dpnlContent"
+                                   Width="{TemplateBinding Width}"
+                                   Height="84"
+                                   LastChildFill="True">
+                            <DockPanel.Background>
+                                <ImageBrush ImageSource="{wpf:ResolveImagePath Path=LowerButtonWheelCenter.png}" />
+                            </DockPanel.Background>
+
+                            <DockPanel x:Name="dpnlLeft"
+                                       Width="7"
+                                       Height="84"
+                                       DockPanel.Dock="Left">
+                                <DockPanel.Background>
+                                    <ImageBrush ImageSource="{wpf:ResolveImagePath Path=LowerButtonWheelLeft.png}" />
+                                </DockPanel.Background>
+                            </DockPanel>
+                            <DockPanel x:Name="dpnlRight"
+                                       Width="8"
+                                       Height="84"
+                                       DockPanel.Dock="Right">
+                                <DockPanel.Background>
+                                    <ImageBrush ImageSource="{wpf:ResolveImagePath Path=LowerButtonWheelRight.png}" />
+                                </DockPanel.Background>
+                            </DockPanel>
+                            <ContentPresenter Margin="{TemplateBinding Padding}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              RecognizesAccessKey="True"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        </DockPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="dpnlContent" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=PressButtonDownCenter.png}" Stretch="Fill"/>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlLeft" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=PressButtonDownLeft.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlRight" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=PressButtonDownRight.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="dpnlContent" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=PressButtonDownCenter.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlLeft" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=PressButtonDownLeft.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="dpnlRight" Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=PressButtonDownRight.png}" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10*" />
+            <RowDefinition Height="4*" />
+        </Grid.RowDefinitions>
+        <Button Panel.ZIndex="2"
+                Grid.Row="1"
+                AutomationProperties.AutomationId="btnPlaceYourBet"      
+                Command="{Binding PlaceBetCommand}"
+                IsEnabled="{Binding IsEnabledPlaceBet}"
+                Style="{StaticResource orangeButton}"
+                Visibility="{Binding AskLoginAnonymous,
+                                     Converter={StaticResource myInverseBooleanToVisibilityConverter}}"
+                VerticalAlignment="Top"
+                Width="170"
+                Height="170">
+            <TextBlock FontFamily="Play"
+                       Margin="0,5,0,0"
+                                   FontSize="16"
+                                   FontWeight="Bold"
+                                   Foreground="#FFEFEFEF"
+                                   LineHeight="22"
+                                    MaxWidth="100"
+                                    TextAlignment="Center"
+                                   LineStackingStrategy="BlockLineHeight"
+                                   Text="{l:Translate Key={x:Static l:MultistringTags.Place_Your_Bet}}"
+                                   TextWrapping="WrapWithOverflow" />
+        </Button>
+        <DockPanel Width="auto"
+                   Grid.Row="0"
+                   Grid.RowSpan="2"
+               Panel.ZIndex="1"
+               Margin="0, 0, 0, 7"
+               Background="#3d3b3d"
+               LastChildFill="True">
+
+
+            <DockPanel Name="UpperButtonsPanel" DockPanel.Dock="Top">
+            <DockPanel Name="WheelAndBettingButtonsPanel"
+                       DockPanel.Dock="Top"
+                       LastChildFill="True">
+                <Grid Name="MainGrid"
+                   
+                      ShowGridLines="False">
+                    <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+
+                    <!--  NumericKeypad  -->
+                    <Grid x:Name="NumericKeypad"
+                          Grid.Row="0"
+                          Grid.Column="0"
+                             Margin="25"
+                          HorizontalAlignment="Center"
+                          ShowGridLines="False">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <!--  ***  -->
+                        <Button Grid.Row="0"
+                                Grid.Column="0"
+                                Margin="0,0,0,20"
+                                Command="{Binding ChangeStake}"
+                                CommandParameter="*1"
+                                Content="1"
+                                Style="{StaticResource numericButton}" />
+                        <Button Grid.Row="0"
+                                Grid.Column="1"
+                                Margin="5,0,0,20"
+                                Command="{Binding ChangeStake}"
+                                CommandParameter="*2"
+                                Content="2"
+                                Style="{StaticResource numericButton}" />
+                        <Button Grid.Row="0"
+                                Grid.Column="2"
+                                Margin="5,0,0,20"
+                                Command="{Binding ChangeStake}"
+                                CommandParameter="*3"
+                                Content="3"
+                                Style="{StaticResource numericButton}" />
+                        <Button Grid.Row="0"
+                                Grid.Column="3"
+                                Margin="0,0,0,20"
+                                Command="{Binding ChangeStake}"
+                                CommandParameter="*4"
+                                Content="4"
+                                Style="{StaticResource numericButton}" />
+                        <Button Grid.Row="0"
+                                Grid.Column="4"
+                                Margin="5,0,0,20"
+                                Command="{Binding ChangeStake}"
+                                CommandParameter="*5"
+                                Content="5"
+                                Style="{StaticResource numericButton}" />
+                        <Button Grid.Row="0"
+                                Grid.Column="5"
+                              Margin="5,0,0,20"
+                                Name="BtnRemove"
+                                Padding="0"
+                                Width="90"
+                                Height="68"
+                                HorizontalAlignment="Left"
+                                Command="{Binding ChangeStake}"
+                                CommandParameter="back">
+                            <Button.Template>
+                                <!---->
+                            <ControlTemplate>
+                            <Image Name="ImageContent" HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Source="{wpf:ResolveImagePath Path=NewDefaultViews/basket-buton-6.png}"
+                                   Stretch="None" />
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="Button.IsPressed" Value="True">
+                                            <Setter TargetName="ImageContent" Property="Image.Source" Value="{wpf:ResolveImagePath Path=NewDefaultViews/basket-buton-6-.png}" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                            </Button.Template>
+                        </Button> <!--Style="{StaticResource fixPlusButton}">-->
+
+                                <Button Grid.Row="1"
+                                Grid.Column="0"
+                                Margin="5,0,0,0"
+                                Command="{Binding ChangeStake}"
+                                CommandParameter="*6"
+                                Content="6"
+                                Style="{StaticResource numericButton}" />
+
+                                <Button Grid.Row="1"
+                                Grid.Column="1"
+                                Margin="0"
+                                Command="{Binding ChangeStake}"
+                                CommandParameter="*7"
+                                Content="7"
+                                Style="{StaticResource numericButton}" />
+                                <Button Grid.Row="1"
+                                Grid.Column="2"
+                                Margin="5,0,0,0"
+                                Command="{Binding ChangeStake}"
+                                CommandParameter="*8"
+                                Content="8"
+                                Style="{StaticResource numericButton}" />
+                                <Button Grid.Row="1"
+                                Grid.Column="3"
+                                Margin="5,0,0,0"
+                                Command="{Binding ChangeStake}"
+                                CommandParameter="*9"
+                                Content="9"
+                                Style="{StaticResource numericButton}" />
+                                <Button Grid.Row="1"
+                                Grid.Column="4"
+                                Margin="5,0,0,0"
+                                Command="{Binding ChangeStake}"
+                                CommandParameter="*0"
+                                Content="0"
+                                Style="{StaticResource numericButton}" />
+
+                                <Button Grid.Row="1"
+                                Grid.Column="5"
+                                VerticalAlignment="Center"
+                                Command="{Binding ChangeStake}"
+                                CommandParameter="clear"
+                               Width="auto"
+                                HorizontalAlignment="Left"
+                                Height="{Binding ElementName=BtnRemove,Path=ActualHeight}"
+                               >
+                                    <Button.Template>
+                                        <ControlTemplate>
+                                            <Grid Name="ImageContent">
+                                                <Grid.Background>
+                                                    <ImageBrush ImageSource="{wpf:ResolveImagePath Path=NewDefaultViews/basket-buton-7.png}"/>
+                                                </Grid.Background>
+
+                                                <TextBlock Name="ContentBtn"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"
+                                                   FontWeight="Bold"
+                                                   Margin="5,0"
+                                                   FontSize="28"
+                                                   FontFamily="Play"
+                                                   Foreground="White"
+                                                   Text="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_FORM_CLEAR}}" >
+                                                    <TextBlock.BitmapEffect>
+                                                        <DropShadowBitmapEffect Color="Black" Direction="135" ShadowDepth="1" Softness="2" Opacity="1"/>
+                                                    </TextBlock.BitmapEffect>
+                                                </TextBlock>
+                                            </Grid>
+
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="Button.IsPressed" Value="True">
+                                                    <Setter TargetName="ImageContent" Property="Background">
+                                                        <Setter.Value>
+                                                            <ImageBrush ImageSource="{wpf:ResolveImagePath Path=NewDefaultViews/basket-buton-7-.png}" />
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+
+                    </Grid>
+
+                        <Rectangle Height="Auto" Width="3" Fill="#2D2D2D" Grid.Column="1" />
+
+                        <Grid x:Name="GridMinMax"
+                          Grid.Row="0"
+                          Grid.Column="2"
+                                 Margin="30"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"
+                         >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="5*" />
+                                <ColumnDefinition Width="6*" />
+                                <ColumnDefinition Width="3*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+
+                            </Grid.RowDefinitions>
+                            <!--  minbet text  -->
+                            <TextBlock Grid.Row="0"
+                                   Grid.Column="0"
+                                   HorizontalAlignment="Left"
+                                   FontFamily="Play"
+                                   FontSize="20"
+                                   FontWeight="Bold"
+                                   Foreground="#FFFFFFFF"
+                                   LineHeight="18"
+                                   LineStackingStrategy="BlockLineHeight"
+                                   Text="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_MINBET}}"
+                                   TextAlignment="Left"
+                                   TextWrapping="WrapWithOverflow" />
+                            <!--  minbet value  -->
+                            <Viewbox Grid.Row="0"
+                                 Grid.Column="1"
+                                 HorizontalAlignment="Right"
+                                 StretchDirection="DownOnly">
+                                <TextBlock AutomationProperties.AutomationId="MinBet"
+                                       FontFamily="Play"
+                                       FontSize="22"
+                                       FontWeight="Bold"
+                                       Foreground="#FFFFFFFF"
+                                       LineStackingStrategy="BlockLineHeight"
+                                       Text="{Binding TicketHandler.MinBet,
+                                                      StringFormat=\{0:N2\}}"
+                                       TextAlignment="Right"
+                                       TextWrapping="Wrap" />
+                            </Viewbox>
+                            <!--  minbet currency  -->
+                            <TextBlock Grid.Row="0"
+                                   Grid.Column="2"
+                                   Margin="5,0,0,0"
+                                   HorizontalAlignment="Left"
+                                   FontFamily="Play"
+                                   FontSize="22"
+                                   FontWeight="Bold"
+                                   Foreground="#FFFFFFFF"
+                                   LineStackingStrategy="BlockLineHeight"
+                                   Text="{Binding Currency}"
+                                   TextAlignment="Right"
+                                   TextWrapping="Wrap" />
+
+                            <!--  maxbet text  -->
+                            <TextBlock Grid.Row="1"
+                                   Grid.Column="0"
+                                   HorizontalAlignment="Left"
+                                   FontFamily="Play"
+                                   FontSize="20"
+                                   FontWeight="Bold"
+                                   Foreground="#FFFFFFFF"
+                                   LineHeight="18"
+                                   LineStackingStrategy="BlockLineHeight"
+                                   Text="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_MAXBET}}"
+                                   TextAlignment="Left"
+                                   TextWrapping="WrapWithOverflow" />
+                            <!--  maxbet value  -->
+                            <Viewbox Grid.Row="1"
+                                 Grid.Column="1"
+                                 HorizontalAlignment="Right"
+                                 StretchDirection="DownOnly">
+                                <TextBlock HorizontalAlignment="Right"
+                                       AutomationProperties.AutomationId="MaxBet"
+                                       FontFamily="Play"
+                                       FontSize="22"
+                                       FontWeight="Bold"
+                                       Foreground="#FFFFFFFF"
+                                       LineStackingStrategy="BlockLineHeight"
+                                       Text="{Binding TicketHandler.MaxBet,
+                                                      StringFormat=\{0:N2\}}"
+                                       TextAlignment="Right"
+                                       TextWrapping="Wrap" />
+                            </Viewbox>
+                            <!--  maxbet currency  -->
+                            <TextBlock Grid.Row="1"
+                                   Grid.Column="2"
+                                   Margin="5,0,0,0"
+                                   HorizontalAlignment="Left"
+                                   FontFamily="Play"
+                                   FontSize="22"
+                                   FontWeight="Bold"
+                                   Foreground="#FFFFFFFF"
+                                   LineStackingStrategy="BlockLineHeight"
+                                   Text="{Binding Currency}"
+                                   TextAlignment="Right"
+                                   TextWrapping="Wrap" />
+
+                            <!--  maxwin text  -->
+                            <TextBlock Grid.Row="2"
+                                   Grid.Column="0"
+                                   HorizontalAlignment="Left"
+                                   FontFamily="Play"
+                                   FontSize="20"
+                                   FontWeight="Bold"
+                                   Foreground="#FFFFFFFF"
+                                   LineHeight="18"
+                                   LineStackingStrategy="BlockLineHeight"
+                                   Text="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_MAXWIN}}"
+                                   TextAlignment="Left"
+                                   TextWrapping="WrapWithOverflow" />
+                            <!--  maxwin value  -->
+                            <Viewbox Grid.Row="2"
+                                 Grid.Column="1"
+                                 HorizontalAlignment="Right"
+                                 StretchDirection="DownOnly">
+                                <TextBlock Grid.Row="2"
+                                       Grid.Column="1"
+                                       Margin="5,0,0,0"
+                                       HorizontalAlignment="Right"
+                                       AutomationProperties.AutomationId="MaxWin"
+                                       FontFamily="Play"
+                                       FontSize="22"
+                                       FontWeight="Bold"
+                                       Foreground="#FFFFFFFF"
+                                       LineStackingStrategy="BlockLineHeight"
+                                       Text="{Binding TicketHandler.MaxWin,
+                                                      StringFormat=\{0:N2\}}"
+                                       TextAlignment="Right"
+                                       TextWrapping="Wrap" />
+                            </Viewbox>
+                            <!--  maxwin currency  -->
+                            <TextBlock Grid.Row="2"
+                                   Grid.Column="2"
+                                   Margin="5,0,0,0"
+                                   HorizontalAlignment="Left"
+                                   FontFamily="Play"
+                                   FontSize="22"
+                                   FontWeight="Bold"
+                                   Foreground="#FFFFFFFF"
+                                   LineStackingStrategy="BlockLineHeight"
+                                   Text="{Binding Currency}"
+                                   TextAlignment="Right"
+                                   TextWrapping="Wrap" />
+
+                            <!--  cashpool text  -->
+                            <TextBlock Grid.Row="3"
+                                       Grid.Column="0"
+                                       Margin="0,10,0,0"
+                                   HorizontalAlignment="Left"
+                                   FontFamily="Play"
+                                   FontSize="20"
+                                   FontWeight="Bold"
+                                   Foreground="#FFFFFFFF"
+                                   LineHeight="18"
+                                   LineStackingStrategy="BlockLineHeight"
+                                   Text="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_AVAILABLE_CASH}}"
+                                   TextAlignment="Left"
+                                   TextWrapping="WrapWithOverflow" />
+                            <Viewbox Grid.Row="3"
+                                 Grid.Column="1"
+                                 HorizontalAlignment="Right"
+                                 StretchDirection="DownOnly">
+                                <TextBlock Grid.Row="2"
+                                       Grid.Column="1"
+                                       Margin="5,10,0,0"
+                                       HorizontalAlignment="Right"
+                                       AutomationProperties.AutomationId="MaxWin"
+                                       FontFamily="Play"
+                                       FontSize="22"
+                                       FontWeight="Bold"
+                                       Foreground="#FFFFFFFF"
+                                       LineStackingStrategy="BlockLineHeight"
+                                       Text="{Binding ChangeTracker.CurrentUser.AvailableCash,
+                                                      StringFormat=\{0:N2\}}"
+                                       TextAlignment="Right"
+                                       TextWrapping="Wrap" />
+                            </Viewbox>
+                            <TextBlock Grid.Row="3"
+                                   Grid.Column="2"
+                                   Margin="5,10,0,0"
+                                   HorizontalAlignment="Left"
+                                   FontFamily="Play"
+                                   FontSize="22"
+                                   FontWeight="Bold"
+                                   Foreground="#FFFFFFFF"
+                                   LineStackingStrategy="BlockLineHeight"
+                                   Text="{Binding Currency}"
+                                   TextAlignment="Right"
+                                   TextWrapping="Wrap" />
+
+                            <!--  Total Stake  -->
+                            <!--  stake text  -->
+                            <TextBlock Grid.Row="4"
+                                   Grid.Column="0"
+                                   HorizontalAlignment="Left"
+                                   FontFamily="Play"
+                                   FontSize="20"
+                                   FontWeight="Bold"
+                                   Foreground="#FFFFFFFF"
+                                   LineHeight="18"
+                                   LineStackingStrategy="BlockLineHeight"
+                                   Text="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_PRINT_STAKE_TOTAL}}"
+                                   TextAlignment="Left"
+                                   TextWrapping="WrapWithOverflow" />
+                            <!--  stake value  -->
+                            <Viewbox Grid.Row="4"
+                                 Grid.Column="1"
+                                 HorizontalAlignment="Right"
+                                 StretchDirection="DownOnly">
+                                <TextBlock Grid.Row="4"
+                                   Grid.Column="1"
+                                   HorizontalAlignment="Right"
+                                   AutomationProperties.AutomationId="TotalStake"
+                                   FontFamily="Play"
+                                   FontSize="22"
+                                   FontWeight="Bold"
+                                   Foreground="#FFFFFFFF"
+                                   LineStackingStrategy="BlockLineHeight"
+                                   Text="{Binding TicketHandler.Stake,
+                                                  StringFormat=\{0:N2\},
+                                                  NotifyOnTargetUpdated=True}"
+                                   TextAlignment="Right"
+                                   TextWrapping="Wrap">
+                                    <TextBlock.Triggers>
+                                        <EventTrigger RoutedEvent="Binding.TargetUpdated">
+                                            <RemoveStoryboard BeginStoryboardName="StakeUpdated" />
+                                            <BeginStoryboard Name="StakeUpdated"
+                                                         HandoffBehavior="Compose"
+                                                         Storyboard="{StaticResource StakeUpdatedStoryboard}" />
+                                        </EventTrigger>
+                                    </TextBlock.Triggers>
+                                </TextBlock>
+                            </Viewbox>
+                            <!--  stake currency  -->
+                            <TextBlock Grid.Row="4"
+                                       Grid.Column="2" 
+                                Margin="5,0,0,0"
+                                       HorizontalAlignment="Left"
+                                       FontFamily="Play"
+                                       FontSize="22"
+                                       FontWeight="Bold"
+                                       Foreground="#FFFFFFFF"
+                                       LineStackingStrategy="BlockLineHeight"
+                                       Text="{Binding Currency}"
+                                       TextAlignment="Left"
+                                       TextWrapping="Wrap" />
+
+                            <!--  Possible Winning  -->
+                            <!--  possible win  -->
+                            <TextBlock Grid.Row="5"
+                                   Grid.Column="0"
+                                   HorizontalAlignment="Left"
+                                   FontFamily="Play"
+                                   FontSize="20"
+                                   FontWeight="Bold"
+                                   Foreground="#FFFF4e00"
+                                   LineHeight="18"
+                                   LineStackingStrategy="BlockLineHeight"
+                                   Text="{l:Translate Key={x:Static l:MultistringTags.Est_return}}"
+                                   TextAlignment="Left"
+                                   TextWrapping="WrapWithOverflow" />
+                            <!--  possible win value  -->
+                            <Viewbox Grid.Row="5"
+                                 Grid.Column="1"
+                                 HorizontalAlignment="Right"
+                                 StretchDirection="DownOnly">
+                                <TextBlock Grid.Row="5"
+                                       Grid.Column="1"
+                                    HorizontalAlignment="Right"
+                                       AutomationProperties.AutomationId="PossibleWin"
+                                       FontFamily="Play"
+                                       FontSize="22"
+                                       FontWeight="Bold"
+                                       Foreground="#FFFF4e00"
+                                       LineStackingStrategy="BlockLineHeight"
+                                       Text="{Binding TicketHandler.CurrentTicketPossibleWin,
+                                                      StringFormat=\{0:N2\}}"
+                                       TextAlignment="Right" />
+                            </Viewbox>
+                            <!--  possible win currency  -->
+                            <TextBlock Grid.Row="5"
+                                       Grid.Column="2" Margin="5,0,0,0"
+                                       HorizontalAlignment="Left"
+                                       FontFamily="Play"
+                                       FontSize="22"
+                                       FontWeight="Bold"
+                                       Foreground="#FFFF4e00"
+                                       LineStackingStrategy="BlockLineHeight"
+                                       Text="{Binding Currency}"
+                                       TextAlignment="Left"
+                                       TextWrapping="Wrap" />
+
+                        </Grid>
+                    <!--</Grid>-->
+                        <Rectangle Height="Auto" Width="3" Fill="#2D2D2D" Grid.Column="3" />
+                        <!--  PlusKeys  -->
+                    <Grid x:Name="PlusKeys"
+                          Grid.Row="0"
+                             Margin="25"
+                          Grid.Column="4"
+                          HorizontalAlignment="Center">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Button Grid.Row="0"
+                                Grid.Column="0"
+                                Margin="0,0,0,13"
+                                AutomationProperties.AutomationId="+10"
+                                Command="{Binding ChangeStake}"
+                                CommandParameter="+10"
+                                Content="+10"
+                                Style="{StaticResource fixPlusButton}" />
+                        <Button Grid.Row="0"
+                                Grid.Column="1"
+                                Margin="0,0,0,13"
+                                AutomationProperties.AutomationId="+50"
+                                Command="{Binding ChangeStake}"
+                                CommandParameter="+20"
+                                Content="+20"
+                                Style="{StaticResource fixPlusButton}" />
+                        <Button Grid.Row="1"
+                                Grid.Column="0"
+                                Margin="0,0,0,13"
+                                AutomationProperties.AutomationId="+100"
+                                Command="{Binding ChangeStake}"
+                                CommandParameter="+50"
+                                Content="+50"
+                                Style="{StaticResource fixPlusButton}" />
+                        <Button x:Name="MaxBetTextButton"
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Margin="0,0,0,13"
+                                AutomationProperties.AutomationId="Max Bet"
+                                Command="{Binding ChangeStake}"
+                                CommandParameter="max"
+                                Style="{StaticResource fixPlusButton}">
+                            <Viewbox Stretch="Uniform">
+                                <TextBlock Width="{Binding Width,
+                                                           ElementName=MaxBetTextButton}"
+                                           Text="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_MAXBET}}"
+                                           TextAlignment="Center"
+                                           TextWrapping="WrapWithOverflow" />
+                            </Viewbox>
+                        </Button>
+                    </Grid>
+
+                </Grid>
+            </DockPanel>
+
+
+                <Rectangle Height="3" Width="Auto" Fill="#2D2D2D" DockPanel.Dock="Top"  />
+                <Grid x:Name="Wheel"
+                         DockPanel.Dock="Top" HorizontalAlignment="Stretch" Margin="10,0" Visibility="{Binding ShowViewWheel,Converter={StaticResource ShowBigListButtons}}"
+                          >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="auto" />
+                         <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!--<Button  Grid.Column="0"
+                                Command="{Binding SpinWheel}"
+                                CommandParameter="0"
+                                Style="{StaticResource upButton}">
+
+                        <Button.Template>
+                            <ControlTemplate>
+                                <Image HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Source="{wpf:ResolveImagePath Path=BasketView/basket-sistem-left.png}"
+                                   Stretch="None" Name="Image"/>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="Button.IsPressed" Value="True">
+                                        <Setter TargetName="Image" Property="Source" Value="{wpf:ResolveImagePath Path=BasketView/basket-sistem-left-.png}" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>-->
+
+                        <StackPanel Orientation="Horizontal" Grid.Column="1">
+                        <RadioButton
+                             GroupName="WheelButtons"
+                                    Command="{Binding ClickWheelButton}"
+                                AutomationProperties.AutomationId="wheelUp"
+                                  Style="{StaticResource wheelButton1}"
+                                    CommandParameter="1">  
+
+                        <TextBlock FontFamily="Play"
+                                           FontSize="22"
+                                           FontWeight="Normal"
+                                           Foreground="#FFEFEFEF"
+                                           LineHeight="22"
+                                           LineStackingStrategy="BlockLineHeight"
+                                           Text="{Binding WheelLine1.Text}"
+                                           TextAlignment="Left"
+                                           TextWrapping="Wrap" />
+                    </RadioButton>
+
+                        <RadioButton         GroupName="WheelButtons"
+                                    AutomationProperties.AutomationId="wheelCurrent"
+                                    Command="{Binding ClickWheelButton}"
+                                    CommandParameter="2"
+                                    Style="{StaticResource wheelButton2}">
+                        <TextBlock FontFamily="Play"
+                                           FontSize="22"
+                                           FontWeight="Bold"
+                                           Foreground="#FFEFEFEF"
+                                           LineHeight="22"
+                                           LineStackingStrategy="BlockLineHeight"
+                                           Text="{Binding WheelLine2.Text}"
+                                           TextAlignment="Left"
+                                           TextWrapping="Wrap" />
+                    </RadioButton>
+                        </StackPanel>
+
+                    <Button  Grid.Column="3" 
+                                Command="ScrollBar.LineLeftCommand" CommandTarget="{Binding ElementName=Scruller}"
+                                Style="{StaticResource upButton}">
+
+                        <Button.Template>
+                            <ControlTemplate>
+                                <Image HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Source="{wpf:ResolveImagePath Path=BasketView/basket-sistem-left.png}"
+                                   Stretch="None" Name="Image"/>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="Button.IsPressed" Value="True">
+                                        <Setter TargetName="Image" Property="Source" Value="{wpf:ResolveImagePath Path=BasketView/basket-sistem-left-.png}" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                    <ScrollViewer Grid.Column="4" Width="660" VerticalScrollBarVisibility="Disabled" Name="Scruller" HorizontalScrollBarVisibility="Hidden">
+                            <StackPanel Orientation="Horizontal">
+                                <RadioButton                            
+                                    GroupName="WheelButtons"
+                                    AutomationProperties.AutomationId="wheelCurrent"
+                                    Command="{Binding ClickWheelButton}"
+                                    CommandParameter="3"
+                                    Style="{StaticResource wheelButton3}">
+                                    <TextBlock FontFamily="Play"
+                                           FontSize="22"
+                                           FontWeight="Bold"
+                                           Foreground="#FFEFEFEF"
+                                           LineHeight="22"
+                                           LineStackingStrategy="BlockLineHeight"
+                                           Text="{Binding WheelLine3.Text}"
+                                           TextAlignment="Left"
+                                           TextWrapping="Wrap" />
+                                </RadioButton>
+
+                                <RadioButton                            
+                           GroupName="WheelButtons"
+                                    AutomationProperties.AutomationId="wheelCurrent"
+                                    Command="{Binding ClickWheelButton}"
+                                    CommandParameter="4"
+                                    Style="{StaticResource wheelButton4}">
+                                    <TextBlock FontFamily="Play"
+                                           FontSize="22"
+                                           FontWeight="Bold"
+                                           Foreground="#FFEFEFEF"
+                                           LineHeight="22"
+                                           LineStackingStrategy="BlockLineHeight"
+                                           Text="{Binding WheelLine4.Text}"
+                                           TextAlignment="Left"
+                                           TextWrapping="Wrap" />
+                                </RadioButton>
+
+                                <RadioButton                            
+                           GroupName="WheelButtons"
+                                    AutomationProperties.AutomationId="wheelCurrent"
+                                    Command="{Binding ClickWheelButton}"
+                                    CommandParameter="5"
+                                    Style="{StaticResource wheelButton5}">
+                                    <TextBlock FontFamily="Play"
+                                           FontSize="22"
+                                           FontWeight="Bold"
+                                           Foreground="#FFEFEFEF"
+                                           LineHeight="22"
+                                           LineStackingStrategy="BlockLineHeight"
+                                           Text="{Binding WheelLine5.Text}"
+                                           TextAlignment="Left"
+                                           TextWrapping="Wrap" />
+                                </RadioButton>
+
+                                <RadioButton                            
+                           GroupName="WheelButtons"
+                                    AutomationProperties.AutomationId="wheelCurrent"
+                                    Command="{Binding ClickWheelButton}"
+                                    CommandParameter="6"
+                                    Style="{StaticResource wheelButton6}">
+                                    <TextBlock FontFamily="Play"
+                                           FontSize="22"
+                                           FontWeight="Bold"
+                                           Foreground="#FFEFEFEF"
+                                           LineHeight="22"
+                                           LineStackingStrategy="BlockLineHeight"
+                                           Text="{Binding WheelLine6.Text}"
+                                           TextAlignment="Left"
+                                           TextWrapping="Wrap" />
+                                </RadioButton>
+
+                                <RadioButton                            
+                           GroupName="WheelButtons"
+                                    AutomationProperties.AutomationId="wheelCurrent"
+                                    Command="{Binding ClickWheelButton}"
+                                    CommandParameter="7"
+                                    Style="{StaticResource wheelButton7}">
+                                    <TextBlock FontFamily="Play"
+                                           FontSize="22"
+                                           FontWeight="Bold"
+                                           Foreground="#FFEFEFEF"
+                                           LineHeight="22"
+                                           LineStackingStrategy="BlockLineHeight"
+                                           Text="{Binding WheelLine7.Text}"
+                                           TextAlignment="Left"
+                                           TextWrapping="Wrap" />
+                                </RadioButton>
+
+                                <RadioButton                            
+                           GroupName="WheelButtons"
+                                    AutomationProperties.AutomationId="wheelCurrent"
+                                    Command="{Binding ClickWheelButton}"
+                                    CommandParameter="8"
+                                    Style="{StaticResource wheelButton8}">
+                                    <TextBlock FontFamily="Play"
+                                           FontSize="22"
+                                           FontWeight="Bold"
+                                           Foreground="#FFEFEFEF"
+                                           LineHeight="22"
+                                           LineStackingStrategy="BlockLineHeight"
+                                           Text="{Binding WheelLine8.Text}"
+                                           TextAlignment="Left"
+                                           TextWrapping="Wrap" />
+                                </RadioButton>
+
+                                <RadioButton                            
+                           GroupName="WheelButtons"
+                                    AutomationProperties.AutomationId="wheelCurrent"
+                                    Command="{Binding ClickWheelButton}"
+                                    CommandParameter="9"
+                                    Style="{StaticResource wheelButton9}">
+                                    <TextBlock FontFamily="Play"
+                                           FontSize="22"
+                                           FontWeight="Bold"
+                                           Foreground="#FFEFEFEF"
+                                           LineHeight="22"
+                                           LineStackingStrategy="BlockLineHeight"
+                                           Text="{Binding WheelLine9.Text}"
+                                           TextAlignment="Left"
+                                           TextWrapping="Wrap" />
+                                </RadioButton>
+                            </StackPanel>
+                        </ScrollViewer>
+
+                    <Button Grid.Column="5" 
+                                Command="ScrollBar.LineRightCommand" CommandTarget="{Binding ElementName=Scruller}"
+                                Style="{StaticResource downButton}">
+                        <Button.Template>
+                            <ControlTemplate>
+
+                                <Image HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Source="{wpf:ResolveImagePath Path=BasketView/basket-sistem-right.png}"
+                                   Stretch="None"  Name="Image"/>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="Button.IsPressed" Value="True">
+                                        <Setter TargetName="Image" Property="Source" Value="{wpf:ResolveImagePath Path=BasketView/basket-sistem-right-.png}" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+
+                    </Button>
+
+                    <!---->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                </Grid>
+                
+                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10,0" Visibility="{Binding ShowViewWheel,Converter={StaticResource ShowSmallListButtons}}">
+                            
+                          <RadioButton AutomationProperties.AutomationId="wheelCurrent"   GroupName="WheelButtons"
+                                    Command="{Binding ClickWheelButton}"
+                                    CommandParameter="1"
+                                    Style="{StaticResource wheelButton1}">
+                                    <TextBlock FontFamily="Play"
+                                           FontSize="22"
+                                           FontWeight="Bold"
+                                           Foreground="#FFEFEFEF"
+                                           LineHeight="22"
+                                           LineStackingStrategy="BlockLineHeight"
+                                           Text="{Binding WheelLine1.Text}"
+                                           TextAlignment="Left"
+                                           TextWrapping="Wrap" />
+                                </RadioButton>
+                          <RadioButton AutomationProperties.AutomationId="wheelCurrent"   GroupName="WheelButtons"
+                                    Command="{Binding ClickWheelButton}"
+                                    CommandParameter="2"
+                                    Style="{StaticResource wheelButton2}">
+                                    <TextBlock FontFamily="Play"
+                                           FontSize="22"
+                                           FontWeight="Bold"
+                                           Foreground="#FFEFEFEF"
+                                           LineHeight="22"
+                                           LineStackingStrategy="BlockLineHeight"
+                                           Text="{Binding WheelLine2.Text}"
+                                           TextAlignment="Left"
+                                           TextWrapping="Wrap" />
+                                </RadioButton>
+                          <RadioButton AutomationProperties.AutomationId="wheelCurrent"   GroupName="WheelButtons"
+                                    Command="{Binding ClickWheelButton}"
+                                    CommandParameter="3"
+                                    Style="{StaticResource wheelButton3}">
+                                    <TextBlock FontFamily="Play"
+                                           FontSize="22"
+                                           FontWeight="Bold"
+                                           Foreground="#FFEFEFEF"
+                                           LineHeight="22"
+                                           LineStackingStrategy="BlockLineHeight"
+                                           Text="{Binding WheelLine3.Text}"
+                                           TextAlignment="Left"
+                                           TextWrapping="Wrap" />
+                                </RadioButton>
+                    
+                          <RadioButton AutomationProperties.AutomationId="wheelCurrent"   GroupName="WheelButtons"
+                                    Command="{Binding ClickWheelButton}"
+                                    CommandParameter="4"
+                                    Style="{StaticResource wheelButton4}">
+                                    <TextBlock FontFamily="Play"
+                                           FontSize="22"
+                                           FontWeight="Bold"
+                                           Foreground="#FFEFEFEF"
+                                           LineHeight="22"
+                                           LineStackingStrategy="BlockLineHeight"
+                                           Text="{Binding WheelLine4.Text}"
+                                           TextAlignment="Left"
+                                           TextWrapping="Wrap" />
+                                </RadioButton>
+                          <RadioButton AutomationProperties.AutomationId="wheelCurrent"   GroupName="WheelButtons"
+                                    Command="{Binding ClickWheelButton}"
+                                    CommandParameter="5"
+                                    Style="{StaticResource wheelButton5}">
+                                    <TextBlock FontFamily="Play"
+                                           FontSize="22"
+                                           FontWeight="Bold"
+                                           Foreground="#FFEFEFEF"
+                                           LineHeight="22"
+                                           LineStackingStrategy="BlockLineHeight"
+                                           Text="{Binding WheelLine5.Text}"
+                                           TextAlignment="Left"
+                                           TextWrapping="Wrap" />
+                                </RadioButton>
+                          <RadioButton AutomationProperties.AutomationId="wheelCurrent"   GroupName="WheelButtons"
+                                    Command="{Binding ClickWheelButton}"
+                                    CommandParameter="6"
+                                    Style="{StaticResource wheelButton6}">
+                                    <TextBlock FontFamily="Play"
+                                           FontSize="22"
+                                           FontWeight="Bold"
+                                           Foreground="#FFEFEFEF"
+                                           LineHeight="22"
+                                           LineStackingStrategy="BlockLineHeight"
+                                           Text="{Binding WheelLine6.Text}"
+                                           TextAlignment="Left"
+                                           TextWrapping="Wrap" />
+                                </RadioButton>
+                          <RadioButton AutomationProperties.AutomationId="wheelCurrent"   GroupName="WheelButtons"
+                                    Command="{Binding ClickWheelButton}"
+                                    CommandParameter="7"
+                                    Style="{StaticResource wheelButton7}">
+                                    <TextBlock FontFamily="Play"
+                                           FontSize="22"
+                                           FontWeight="Bold"
+                                           Foreground="#FFEFEFEF"
+                                           LineHeight="22"
+                                           LineStackingStrategy="BlockLineHeight"
+                                           Text="{Binding WheelLine7.Text}"
+                                           TextAlignment="Left"
+                                           TextWrapping="Wrap" />
+                                </RadioButton>
+                          <RadioButton AutomationProperties.AutomationId="wheelCurrent"   GroupName="WheelButtons"
+                                    Command="{Binding ClickWheelButton}"
+                                    CommandParameter="8"
+                                    Style="{StaticResource wheelButton8}">
+                                    <TextBlock FontFamily="Play"
+                                           FontSize="22"
+                                           FontWeight="Bold"
+                                           Foreground="#FFEFEFEF"
+                                           LineHeight="22"
+                                           LineStackingStrategy="BlockLineHeight"
+                                           Text="{Binding WheelLine8.Text}"
+                                           TextAlignment="Left"
+                                           TextWrapping="Wrap" />
+                                </RadioButton>
+                    
+                    <RadioButton AutomationProperties.AutomationId="wheelCurrent"   GroupName="WheelButtons"
+                                    Command="{Binding ClickWheelButton}"
+                                    CommandParameter="9"
+                                    Style="{StaticResource wheelButton9}">
+                                    <TextBlock FontFamily="Play"
+                                           FontSize="22"
+                                           FontWeight="Bold"
+                                           Foreground="#FFEFEFEF"
+                                           LineHeight="22"
+                                           LineStackingStrategy="BlockLineHeight"
+                                           Text="{Binding WheelLine9.Text}"
+                                           TextAlignment="Left"
+                                           TextWrapping="Wrap" />
+                                </RadioButton>
+                </StackPanel>
+          
+
+            <Border x:Name="MiddleInfoBar"
+                    Height="63"
+                    Background="#3C5D6A"
+                    BorderBrush="#FF5D5E5F"
+                    BorderThickness="0,1,0,1"
+                    DockPanel.Dock="Top">
+                <DockPanel LastChildFill="True">
+                    <DockPanel.Background>
+                        <ImageBrush ImageSource="{wpf:ResolveImagePath Path=basketTipItemsBackGround.png}" />
+                    </DockPanel.Background>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*" />
+                            <ColumnDefinition Width="6.5*" />
+                                <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="3*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <!--  select  -->
+                        <TextBlock Grid.Row="0"
+                                   Grid.Column="0"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   FontFamily="Play"
+                                   FontSize="18"
+                                   FontWeight="Normal"
+                                   Foreground="#f2f2f2"
+                                   Text="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_SELECT}}"
+                                   TextAlignment="Center"
+                                   TextWrapping="Wrap" />
+
+                        <!--  ticket type  -->
+                        <StackPanel Grid.Row="0"
+                                    Grid.Column="1"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Orientation="Horizontal">
+                            <TextBlock HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       FontFamily="Play"
+                                       FontSize="18"
+                                       FontWeight="Normal"
+                                       Foreground="#f2f2f2"
+                                       Text="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_TICKET_TYPE}}"
+                                       TextAlignment="Center"
+                                       TextWrapping="Wrap" />
+                            <TextBlock HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       AutomationProperties.AutomationId="BetType"
+                                       FontFamily="Play"
+                                       FontSize="18"
+                                       FontWeight="Normal"
+                                       Foreground="#f2f2f2"
+                                       Text="{Binding SystemBanker}"
+                                       TextAlignment="Center"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+
+                    <TextBlock FontFamily="Play"
+                                  
+                               Grid.Row="0"
+                                
+                                       FontSize="18"
+                                       FontWeight="Normal"
+                                       Foreground="#f2f2f2"
+                               Visibility="{Binding IsSingleBet,Converter={StaticResource ShowBigListButtons}}"
+                               Grid.Column="2"
+                                   VerticalAlignment="Center"
+                                   Text="{l:Translate Key={x:Static l:MultistringTags.SINGLE_STAKE_BET}}"
+                                   TextAlignment="Left"
+                                   TextWrapping="WrapWithOverflow" />
+                        
+                    <!--  odds  -->
+                        <StackPanel Grid.Row="0"
+                                    Grid.Column="3"
+                                    Margin="0,0,20,0"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    Orientation="Horizontal">
+                            <StackPanel.Style>
+                                <Style>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding TicketHandler.TicketsInBasket.Count, Converter={StaticResource BiggerThanToBooleanConverter}, ConverterParameter=1}" Value="True">
+                                            <Setter Property="Grid.Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+                            <TextBlock HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       FontFamily="Play"
+                                       FontSize="18"
+                                       FontWeight="Normal"
+                                       Foreground="#f2f2f2"
+                                       Text="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_ODD}}"
+                                       TextAlignment="Right"
+                                       TextWrapping="Wrap" />
+                            <TextBlock Margin="5,0,0,0"
+                                       HorizontalAlignment="Right"
+                                       VerticalAlignment="Center"
+                                       AutomationProperties.AutomationId="TotalOdds"
+                                       FontFamily="Play"
+                                       FontSize="18"
+                                       FontWeight="Normal"
+                                       Foreground="#f2f2f2"
+                                       
+                                       Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                                                      Path=DataContext.TicketHandler.TotalOddDisplay,
+                                                      StringFormat=\{0:N2\}}"
+                                       TextAlignment="Right"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+
+                        <!--  </StackPanel>  -->
+                        <Button Grid.Row="0"
+                                Grid.Column="4"
+                                Width="155"
+                                Height="45"
+                                Margin="0,0,10,0"
+                                VerticalAlignment="Center"
+                                AutomationProperties.AutomationId="btnRemoveAll"
+                                Command="{Binding DeleteAllBetsCommand}"
+                                DockPanel.Dock="Right"
+                                Style="{StaticResource navigationButton}">
+                            <Viewbox StretchDirection="DownOnly">
+                                <TextBlock Style="{StaticResource normalText}"
+                                           Text="{l:Translate Key={x:Static l:MultistringTags.REMOVE_ALL}}"
+                                           TextAlignment="Center" />
+                            </Viewbox>
+                        </Button>
+                    </Grid>
+                </DockPanel>
+            </Border>
+        </DockPanel>
+
+        <!--<DockPanel x:Name="BottomButtonsPanel"
+                   Height="120"
+                   Margin="0,0,0,1"
+                   DockPanel.Dock="Bottom"
+                   LastChildFill="False"
+                   ZIndex="2">
+            <DockPanel.Background>
+                <ImageBrush AlignmentX="Left"
+                            AlignmentY="Top"
+                            ImageSource="{wpf:ResolveImagePath Path=dark_texture.png}"
+                            Stretch="None"
+                            TileMode="Tile"
+                            Viewport="0,0,3,3"
+                            ViewportUnits="Absolute" />
+            </DockPanel.Background>
+            <StackPanel HorizontalAlignment="Left"
+                        DockPanel.Dock="Left"
+                        Orientation="Horizontal">
+                <Button Width="170"
+                        Height="100"
+                        Margin="25,0,0,0"
+                        AutomationProperties.AutomationId="btnClose"
+                        Command="{Binding CloseCommand}"
+                        Style="{StaticResource CloseButton}">
+                    <Viewbox StretchDirection="DownOnly">
+                        <TextBlock FontFamily="Play"
+                                   FontSize="22"
+                                   FontWeight="Bold"
+                                   Foreground="#FFFFFFFF"
+                                   LineHeight="22"
+                                   LineStackingStrategy="BlockLineHeight"
+                                   Text="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_CLOSE_BASKET}}"
+                                   TextAlignment="Left"
+                                   TextWrapping="Wrap" />
+                    </Viewbox>
+                </Button>
+            </StackPanel>
+            <StackPanel Margin="0,0,25,10"
+                        HorizontalAlignment="Right"
+                        DockPanel.Dock="Bottom"
+                        Orientation="Horizontal"
+                        ZIndex="10">
+                <Button Width="170"
+                        Height="100"
+                        AutomationProperties.AutomationId="btnPrintTicket"
+                        Command="{Binding StoreTicketCommand}"
+                        Style="{StaticResource navigationButton}"
+                        Visibility="{Binding StationRepository.IsStoreTicketEnabled,
+                                             Converter={StaticResource myBooleanToVisibilityConverter}}">
+                    <Viewbox StretchDirection="DownOnly">
+                        <TextBlock FontFamily="Play"
+                                   FontSize="22"
+                                   FontWeight="Bold"
+                                   Foreground="#FFEFEFEF"
+                                   LineHeight="22"
+                                   LineStackingStrategy="BlockLineHeight"
+                                   Text="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_PRINT_STORE_TICKET_HEADER}}"
+                                   TextAlignment="Left"
+                                   TextWrapping="Wrap" />
+                    </Viewbox>
+                </Button>
+
+              
+                <Button Width="312"
+                        Height="100"
+                        Margin="5,0,0,0"
+                        AutomationProperties.AutomationId="btnLogin"
+                        Command="{Binding OpenLoginCommand}"
+                        Style="{StaticResource orangeButton}"
+                        Visibility="{Binding AskLoginAnonymous,
+                                             Converter={StaticResource myBooleanToVisibilityConverter}}">
+                    <Viewbox StretchDirection="DownOnly">
+                        <TextBlock FontFamily="Play"
+                                   FontSize="22"
+                                   FontWeight="Bold"
+                                   Foreground="#FFEFEFEF"
+                                   LineHeight="22"
+                                   LineStackingStrategy="BlockLineHeight"
+                                   Text="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_FORM_LOGIN}}"
+                                   TextAlignment="Left"
+                                   TextWrapping="Wrap" />
+                    </Viewbox>
+                </Button>
+            </StackPanel>
+
+
+        </DockPanel>-->
+
+        <!--<DockPanel Name="NotificationBar"
+                   Height="55"
+                   Margin="1,1,1,-60"
+                   Background="White"
+                   Dock="Bottom"
+                   ZIndex="-10">
+            <DockPanel.Resources>
+                <Storyboard x:Key="ShowNotification">
+                    <ThicknessAnimation Duration="0:0:0:1"
+                                        FillBehavior="HoldEnd"
+                                        Storyboard.TargetProperty="Margin"
+                                        To="1,1,1,5" />
+                </Storyboard>
+                <Storyboard x:Key="HideNotification">
+                    <ThicknessAnimation Duration="0:0:0:1"
+                                        FillBehavior="HoldEnd"
+                                        Storyboard.TargetProperty="Margin"
+                                        To="1,1,1,-60" />
+
+                </Storyboard>
+            </DockPanel.Resources>
+            <DockPanel.Style>
+                <Style>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ShowNotification}" Value="True">
+                            <DataTrigger.EnterActions>
+                                <RemoveStoryboard BeginStoryboardName="BeginShowNotificationStoryboard" />
+                                <RemoveStoryboard BeginStoryboardName="BeginHideNotificationStoryboard" />
+                                <BeginStoryboard x:Name="BeginShowNotificationStoryboard" Storyboard="{StaticResource ShowNotification}" />
+                            </DataTrigger.EnterActions>
+
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding HideNotification}" Value="True">
+                            <DataTrigger.EnterActions>
+                                <RemoveStoryboard BeginStoryboardName="BeginShowNotificationStoryboard" />
+                                <RemoveStoryboard BeginStoryboardName="BeginHideNotificationStoryboard" />
+                                <BeginStoryboard x:Name="BeginHideNotificationStoryboard" Storyboard="{StaticResource HideNotification}" />
+                            </DataTrigger.EnterActions>
+                            <DataTrigger.ExitActions />
+                        </DataTrigger>
+
+
+                    </Style.Triggers>
+                </Style>
+            </DockPanel.Style>
+            <TextBlock Name="lbNotificationText"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       FontFamily="Play"
+                       FontSize="20"
+                       FontWeight="{Binding ErrorMessageWeight}"
+                       Foreground="{Binding NotificationTextColor}"
+                       Text="{Binding NotificationText}"
+                       TextAlignment="Center"
+                       TextWrapping="Wrap">
+                <TextBlock.Style>
+                    <Style>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding AnimateNotificationText}" Value="True">
+                                <DataTrigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0:0:0:0.5"
+                                                             From="1.0"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             To="0.0" />
+
+
+
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.EnterActions>
+                                <Setter Property="TextBlock.Text" Value="{Binding NotificationText, Mode=OneTime}" />
+                                <DataTrigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+
+                                            <DoubleAnimation Duration="0:0:0:0.5"
+                                                             From="0.0"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             To="1.0" />
+
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.ExitActions>
+                            </DataTrigger>
+                            <Trigger Property="TextBlock.Foreground" Value="Red">
+                                <Setter Property="TextBlock.FontWeight" Value="Bold" />
+
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+
+
+        </DockPanel>-->
+
+        <ScrollViewer x:Name="ScrollViewer"
+                      Grid.Row="0"
+                      MinHeight="100"
+                      DockPanel.Dock="Top"
+                      PanningMode="VerticalOnly"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                      Template="{StaticResource secondVisibleScrollView}">
+            <!--  upper large items container  -->
+
+            <ItemsControl HorizontalContentAlignment="Stretch" ItemsSource="{Binding TicketHandler.TicketsInBasket}">
+                <ItemsControl.Background>
+                    <ImageBrush ImageSource="{wpf:ResolveImagePath Path=basketTipItemsBackGround.png}"
+                                TileMode="Tile"
+                                Viewbox="0,0,3,65"
+                                ViewboxUnits="Absolute"
+                                Viewport="0,0,3,65"
+                                ViewportUnits="Absolute" />
+                </ItemsControl.Background>
+                <ItemsControl.Resources>
+                    <DataTemplate DataType="{x:Type shared1:Ticket}">
+                        <DataTemplate.Resources>
+                            <DataTemplate x:Key="TipItemTemplate" DataType="{x:Type viewObjects:ITipItemVw}">
+                                <views2:TipItemTemplate />
+                            </DataTemplate>
+
+                        </DataTemplate.Resources>
+                        <ItemsControl x:Name="icContent"
+                                      HorizontalContentAlignment="Stretch"
+                                      ItemTemplate="{StaticResource TipItemTemplate}"
+                                      ItemsSource="{Binding TipItems}" />
+                    </DataTemplate>
+                </ItemsControl.Resources>
+            </ItemsControl>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="ScrollChanged">
+                    <i:InvokeCommandAction Command="{Binding ScrollChangedCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ScrollViewer}}, Path=ContentVerticalOffset}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </ScrollViewer>
+    </DockPanel>
+    </Grid>
+</UserControl>

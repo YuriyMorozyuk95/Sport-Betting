@@ -1,0 +1,87 @@
+﻿<UserControl
+    x:Class="DefaultViews.Views.ResultTemplate"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:SportBetting.WPF.Prism.Shared.Converters;assembly=SportBetting.WPF.Prism.Shared.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:l="clr-namespace:TranslationByMarkupExtension;assembly=TranslationByMarkupExtension"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:panels="clr-namespace:xMetropol.UI.Panels;assembly=SportBetting.WPF.Prism.Shared"
+    xmlns:shared="clr-namespace:SportBetting.WPF.Prism.Shared;assembly=SportBetting.WPF.Prism.Shared"
+    xmlns:viewModels="clr-namespace:SportRadar.DAL.ViewObjects;assembly=DAL"
+    xmlns:wpfHelper="clr-namespace:SportBetting.WPF.Prism.Shared.WpfHelper;assembly=SportBetting.WPF.Prism.Shared"
+    d:DataContext="{d:DesignInstance Type=viewModels:MatchResultVw}"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <shared:BooleanToVisibilityCollapsedConverter x:Key="myBooleanToVisibilityCollapsedConverter" />
+        <shared:ResultInversTimeToVisibilityConverter x:Key="bInversTimeToVisibilityConverter" />
+        <shared:BooleanToBoldConverter x:Key="BooleanToBoldConverter" />
+        <shared:ResultTimeToVisibilityConverter x:Key="bTimeToVisibilityConverter" />
+        <shared:AlterationIndexAsOddEvenToBooleanConverter x:Key="AlterationIndexAsOddEvenToBooleanConverter" />
+        <shared:TestConverter x:Key="TestConverter" />
+    </UserControl.Resources>
+    <Grid
+        Margin="10"
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.5*" />
+            <RowDefinition Height="0.5*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="AUTO" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="AUTO" />
+        </Grid.ColumnDefinitions>
+        <TextBlock
+            FontFamily="Play"
+            FontSize="30"
+            FontWeight="Bold"
+            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type Expander}, Mode=FindAncestor}, Mode=OneTime}"
+            Text="{Binding StartDate, StringFormat={}{0:dd:MMMMMMMMM}}"
+            TextAlignment="Center" />
+        <TextBlock
+            Grid.Row="1"
+            FontFamily="Play"
+            FontSize="20"
+            FontWeight="Bold"
+            Foreground="Black"
+            TextAlignment="Center"
+            TextWrapping="NoWrap">
+            <Run Text="{Binding StartDate, StringFormat={}{0:hh:mm}, Mode=OneTime}" />
+            <Run Text="{Binding StartDate, StringFormat={}{0:dddd}, Mode=OneTime}" />
+        </TextBlock>
+        <TextBlock
+            Grid.RowSpan="2"
+            Grid.Column="1"
+            Margin="20,5,20,0"
+            FontSize="24">
+            <Run
+                FontWeight="{Binding LineObject.HomeTeamWon, Converter={StaticResource BooleanToBoldConverter}, Mode=OneTime}"
+                Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type Expander}, Mode=FindAncestor}, Mode=OneTime}"
+                Text="{Binding HomeCompetitorName, Mode=OneTime}" />
+            <Run>:</Run>
+            <Run
+                FontWeight="{Binding LineObject.AwayTeamWon, Converter={StaticResource BooleanToBoldConverter}, Mode=OneTime}"
+                Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type Expander}, Mode=FindAncestor}, Mode=OneTime}"
+                Text="{Binding AwayCompetitorName, Mode=OneTime}" />
+            <LineBreak />
+            <Run
+                FontSize="16"
+                FontWeight="Bold"
+                Foreground="Black"
+                Text="{Binding TournamentView.DisplayName, Mode=OneTime}" />
+        </TextBlock>
+        <TextBlock
+            Grid.RowSpan="2"
+            Grid.Column="3"
+            VerticalAlignment="Center"
+            FontFamily="Play"
+            FontSize="20"
+            FontWeight="Bold"
+            Foreground="#FFFF4D00"
+            Text="{Binding Score, Mode=OneTime}"
+            TextAlignment="Center"
+            TextWrapping="WrapWithOverflow" />
+    </Grid>
+</UserControl>

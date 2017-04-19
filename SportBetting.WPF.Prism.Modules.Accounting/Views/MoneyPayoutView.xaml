@@ -1,0 +1,68 @@
+﻿<UserControl x:Class="SportBetting.WPF.Prism.Modules.Accounting.Views.MoneyPayoutView"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:catel="http://catel.codeplex.com"
+                   xmlns:Custom="http://www.codeplex.com/prism"
+                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                   xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                   xmlns:l="clr-namespace:TranslationByMarkupExtension;assembly=TranslationByMarkupExtension"
+                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                   xmlns:Models="clr-namespace:SportBetting.WPF.Prism.Models;assembly=SportBetting.WPF.Prism.Shared"
+                   xmlns:shared="clr-namespace:SportBetting.WPF.Prism.Shared;assembly=SportBetting.WPF.Prism.Shared"
+                   xmlns:WpfHelper="clr-namespace:SportBetting.WPF.Prism.WpfHelper;assembly=SportBetting.WPF.Prism.Shared"
+                   xmlns:baseObjects="clr-namespace:BaseObjects;assembly=BaseObjects"
+                   mc:Ignorable="d"
+                   d:DesignHeight="600" d:DesignWidth="500">
+    
+    <!-- Resources -->
+    <UserControl.Resources>
+    </UserControl.Resources>
+
+    <!-- Content -->
+    <DockPanel HorizontalAlignment="Center" VerticalAlignment="Stretch" LastChildFill="False">
+        <!--  PinKeyboard region  -->
+        <DockPanel Height="400" DockPanel.Dock="Top">
+            <baseObjects:MyContentRegion baseObjects:MyRegionManager.RegionName="EnterAmountPayoutPinKeyboardRegion" DockPanel.Dock="Top" />
+        </DockPanel>
+        <TextBlock DockPanel.Dock="Top"
+                   Margin="0,10"
+                   HorizontalAlignment="Stretch"
+                   TextAlignment="Center"
+                   FontSize="20"
+                   Style="{StaticResource rowEntry}"
+                   FontWeight="Bold"
+                   Text="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_ENTER_AMOUNT_TO_PAYOUT}}" />
+        <TextBox DockPanel.Dock="Top"
+                 IsEnabled="False"
+                 Margin="0,10"
+                 HorizontalAlignment="Stretch"
+                 VerticalContentAlignment="Center"
+                 FontFamily="HelveticaNeue-Medium"
+                 Style="{DynamicResource UsernameTextBoxStyleNoValidation}"
+                 Text="{Binding AmountDescription}"
+                 TextAlignment="Right"/>
+        <!--  cashpool amount (text)  -->
+        <TextBlock DockPanel.Dock="Top"
+                   Margin="0,10"
+                   HorizontalAlignment="Stretch"
+                   TextAlignment="Center"
+                   FontSize="20"
+                   Style="{StaticResource rowEntry}"
+                   FontWeight="Bold"
+                   Text="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_CASHPOOL_AMOUNT}}">
+        </TextBlock>
+        <!--  cashpool amount (value)  -->
+        <TextBox DockPanel.Dock="Top"
+                 IsEnabled="False"
+                 Margin="0,10"
+                 HorizontalAlignment="Stretch"
+                 VerticalContentAlignment="Center"
+                 FontFamily="HelveticaNeue-Medium"
+                 Style="{StaticResource UsernameTextBoxStyleNoValidation}"
+                 Text="{Binding Cashpool, Mode=OneWay,
+                                StringFormat=f2}"
+                 TextAlignment="Right"
+                 AutomationProperties.AutomationId="CashpoolAmount">
+        </TextBox>
+    </DockPanel>
+</UserControl>

@@ -1,0 +1,577 @@
+﻿<UserControl
+    x:Class="DefaultViews.Views.UserManagementView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:baseObjects="clr-namespace:BaseObjects;assembly=BaseObjects"
+    xmlns:converters="clr-namespace:SportBetting.WPF.Prism.Shared.Converters;assembly=SportBetting.WPF.Prism.Shared"
+    xmlns:converters2="clr-namespace:SportBetting.WPF.Prism.Converters;assembly=SportBetting.WPF.Prism.Shared"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:l="clr-namespace:TranslationByMarkupExtension;assembly=TranslationByMarkupExtension"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:shared="clr-namespace:SportBetting.WPF.Prism.Shared;assembly=SportBetting.WPF.Prism.Shared"
+    xmlns:viewModels2="clr-namespace:ViewModels.ViewModels;assembly=ViewModels"
+    d:DataContext="{d:DesignInstance Type=viewModels2:UserManagementViewModel}"
+    mc:Ignorable="d"
+    Background="#3C3C3C">
+    <UserControl.Resources>
+        <shared:BooleanToVisibilityCollapsedConverter x:Key="myBooleanToVisibilityConverter" />
+        <shared:InverseBooleanToVisibilityCollapsedConverter x:Key="myInverseBooleanToVisibilityConverter" />
+        <Style x:Key="BorderMenuItem_Style" TargetType="Border">
+            <Setter Property="CornerRadius" Value="7" />      
+            <Setter Property="BorderThickness" Value="2" />
+            <Setter Property="BorderBrush" Value="#707070" />
+            <Setter Property="Background" Value="{StaticResource SilverToBlack_LinearGradientBrush}" />
+            <Setter Property="Padding" Value="5" />
+        </Style>
+        <Style x:Key="ExpanderMenuSlider_Style" TargetType="Expander">
+            <Setter Property="Header" Value="SHOW &gt;&gt;&gt;" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Expander">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="AUTO" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <ToggleButton
+                                Name="OpenCloseExpander"
+                                VerticalAlignment="Top"
+                                Content="{TemplateBinding Header}"
+                                FontFamily="Play"
+                                FontSize="20"
+                                Foreground="Black"
+                                IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource AncestorType={x:Type Expander}, Mode=FindAncestor}}"
+                                TextBlock.TextAlignment="Right">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border Padding="10" Background="#585858">
+                                            <ContentPresenter />
+                                        </Border>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+                            <ContentPresenter
+                                Name="ExpanderContent"
+                                Grid.Row="1"
+                                VerticalAlignment="Top"
+                                Visibility="Collapsed" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsExpanded" Value="True">
+                                <Setter TargetName="ExpanderContent" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsExpanded" Value="True">
+                    <Setter Property="Header" Value="HIDE &lt;&lt;&lt;" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="ExpanderMenuItem_Style" TargetType="Expander">
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Expander">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="AUTO" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>                            
+                                <ToggleButton
+                                Name="OpenCloseExpander"
+                                Content="{TemplateBinding Header}"
+                                IsChecked="{Binding RelativeSource={RelativeSource AncestorType={x:Type Expander}, Mode=FindAncestor}, Mode=OneWay}">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border Style="{StaticResource BorderMenuItem_Style}">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <ContentPresenter Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                                                <Image Grid.Column="1" Name="ArrowImage" HorizontalAlignment="Right" Source="{converters:ResolveImagePath Path=LiveView/strelka-close.png}" />
+                                            </Grid>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="ArrowImage" Property="Source" Value="{converters:ResolveImagePath Path=LiveView/strelka-open.png}" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>                            
+                            </ToggleButton>                          
+                            <ContentPresenter
+                                Name="ExpanderContent"
+                                Grid.Row="1"
+                                Visibility="Collapsed" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <DataTrigger Binding="{Binding IsChecked, ElementName=OpenCloseExpander}" Value="True">
+                                <Setter TargetName="ExpanderContent" Property="Visibility" Value="Visible" />                                
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="menuItemButton_Style" TargetType="{x:Type RadioButton}">
+            <Setter Property="FontSize" Value="22" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RadioButton}">
+                        <TextBlock TextDecorations="Underline" Text="{TemplateBinding Content}"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="Foreground" Value="#EFA030" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+    <!--<UserControl.Background>
+        <ImageBrush
+            AlignmentX="Left"
+            AlignmentY="Top"
+            ImageSource="{converters:ResolveImagePath Path=BackgroundTileNotTransparent.png}"
+            Stretch="None"
+            TileMode="Tile"
+            Viewport="0,0,3,3"
+            ViewportUnits="Absolute" />
+    </UserControl.Background>-->
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="AUTO" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <baseObjects:MyContentRegion
+            Grid.Column="1"
+            VerticalAlignment="Stretch"
+            baseObjects:MyRegionManager.RegionName="UsermanagementContentRegion" />
+      
+        <Expander
+            VerticalAlignment="Top"
+            IsExpanded="True"
+            Style="{StaticResource ExpanderMenuSlider_Style}">
+            <ScrollViewer Height="680">
+                <Grid x:Name="userManagementButtons">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="AUTO" />
+                        <RowDefinition Height="AUTO" />
+                        <RowDefinition Height="AUTO" />
+                        <RowDefinition Height="AUTO" />
+                        <RowDefinition Height="AUTO" />
+                        <RowDefinition Height="AUTO" />
+                    </Grid.RowDefinitions>
+                    <Expander  Margin="25,25,25,10"         
+                    Style="{StaticResource ExpanderMenuItem_Style}">
+                        <Expander.Header>
+                            <TextBlock Foreground="#DCDCDC"  Style="{StaticResource normalText}" Text="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_TICKET}}" />
+                        </Expander.Header>
+                        <Expander.Content>
+                            <StackPanel Margin="17,0,0,0">
+                                <RadioButton
+                                Margin="0,10,0,5"
+                                AutomationProperties.AutomationId="BindMyCard"
+                                Command="{Binding ShowPayoutCommand}"
+                                Content="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_FORM_PAYOUT}}"                                
+                                GroupName="SmallButtons"                                
+                                HorizontalAlignment="Left"                                
+                                IsChecked="{Binding ChangeTracker.TicketChecked}"
+                                Style="{StaticResource menuItemButton_Style}">
+                                </RadioButton>
+                                <RadioButton
+                                Margin="0,5,0,5"
+                                AutomationProperties.AutomationId="PrintLastTicket"
+                                Command="{Binding PrintLastTicketCommand}"
+                                Content="{l:Translate Key={x:Static l:MultistringTags.PRINT_TICKETS}}"
+                                GroupName="SmallButtons"
+                                HorizontalAlignment="Left"
+                                IsChecked="{Binding ChangeTracker.PrintTicketChecked}"
+                                Style="{StaticResource menuItemButton_Style}" />
+                                <Button
+                                Margin="0,5,0,5"
+                                AutomationProperties.AutomationId="PrintDuplicate"
+                                Command="{Binding PrintDublicateCommand}"
+                                HorizontalAlignment="Left"
+                                Style="{StaticResource nonRadioUserProfileButton}"
+                                Visibility="{Binding PrintDublicateVisibility}">
+                                    <Viewbox StretchDirection="DownOnly">
+                                        <TextBlock Style="{StaticResource normalText}" Text="{l:Translate Key={x:Static l:MultistringTags.PRINT_DUPLICATE}}" />
+                                    </Viewbox>
+                                </Button>
+                            </StackPanel>
+                        </Expander.Content>
+                    </Expander>
+                    <Expander  Margin="25,10,25,10"        Grid.Row="1" Style="{StaticResource ExpanderMenuItem_Style}">
+                        <!--<DataTrigger Binding="{Binding ChangeTracker.OperatorsShiftsReporChecked}" Value="True">
+                    <Setter Property="IsChecked" Value="True" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding ChangeTracker.CashHistoryChecked}" Value="True">
+                    <Setter Property="IsChecked" Value="True" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding ChangeTracker.OpenShiftsChecked}" Value="True">
+                    <Setter Property="IsChecked" Value="True" />
+                </DataTrigger>
+
+                <DataTrigger Binding="{Binding ChangeTracker.OpenShiftsChecked}" Value="True">
+                    <Setter Property="IsChecked" Value="True" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding ChangeTracker.CashOperationsChecked}" Value="True">
+                    <Setter Property="IsChecked" Value="True" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding ChangeTracker.ProfitAccountingChecked}" Value="True">
+                                <Setter Property="IsChecked" Value="True" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ChangeTracker.ShopPaymentsChecked}" Value="True">
+                                <Setter Property="IsChecked" Value="True" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ChangeTracker.TerminalAccountingChecked}" Value="True">
+                                <Setter Property="IsChecked" Value="True" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ChangeTracker.EmptyBoxChecked}" Value="True">
+                                <Setter Property="IsChecked" Value="True" />
+                            </DataTrigger>-->
+                        <Expander.Header>
+                            <TextBlock Foreground="#DCDCDC" Style="{StaticResource normalText}" Text="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_ADMIN_MENU_ACCOUNTING}}" />
+                        </Expander.Header>
+                        <Expander.Content>
+                            <StackPanel Margin="17,0,0,0">
+                                <RadioButton
+                                Margin="0,10,0,5"
+                                HorizontalAlignment="Left"   
+                                AutomationProperties.AutomationId="OperShiftReport"
+                                Command="{Binding ShowOperatorShiftReportCommand}"
+                                Content="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_OPER_SHIFT_REPORT}}"
+                                GroupName="SmallButtons"
+                                IsChecked="{Binding ChangeTracker.OperatorsShiftsReporChecked}"
+                                Style="{StaticResource menuItemButton_Style}"
+                                Visibility="{Binding OperatorShiftButtonActive, Converter={StaticResource myBooleanToVisibilityConverter}}" />
+                                <RadioButton
+                                Margin="0,5,0,5"
+                                HorizontalAlignment="Left"  
+                                Name="CashHistory"
+                                AutomationProperties.AutomationId="CashHistory"
+                                Command="{Binding ShowCashHistoryCommand}"
+                                Content="{l:Translate Key={x:Static l:MultistringTags.SHOW_CASH_HISTORY}}"
+                                GroupName="SmallButtons"
+                                IsChecked="{Binding ChangeTracker.CashHistoryChecked}"
+                                Style="{StaticResource menuItemButton_Style}"
+                                Visibility="{Binding ChangeTracker.CurrentUser.ViewCashHistory, Converter={StaticResource myBooleanToVisibilityConverter}}" />
+                                <Button
+                                Margin="0,5,0,5"
+                                HorizontalAlignment="Left"  
+                                AutomationProperties.AutomationId="CloseBalance"
+                                Command="{Binding CloseBalance}"
+                                Content="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_EMPTY_BOX}}"
+                                Style="{StaticResource nonRadioUserProfileButton}" />
+                                <RadioButton
+                                Margin="0,5,0,5"
+                                HorizontalAlignment="Left"  
+                                AutomationProperties.AutomationId="LOShiftReport"
+                                Command="{Binding ShowOperatorShiftReportsCommand}"
+                                Content="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_LO_SHIFT_REPORT}}"
+                                GroupName="SmallButtons"
+                                IsChecked="{Binding ChangeTracker.OpenShiftsChecked}"
+                                Style="{StaticResource menuItemButton_Style}" />
+                                <!--  from accounting  -->
+                                <RadioButton
+                                Margin="0,5,0,5"
+                                HorizontalAlignment="Left"  
+                                AutomationProperties.AutomationId="CashOperations"
+                                Command="{Binding CashOperationsCommand}"
+                                Content="{l:Translate Key={x:Static l:MultistringTags.CASH_OPERATIONS}}"
+                                GroupName="SmallButtons"
+                                IsChecked="{Binding ChangeTracker.CashOperationsChecked}"
+                                Style="{StaticResource menuItemButton_Style}" />
+                                <!--
+                    <RadioButton Height="60"
+                    Margin="0,5,0,0"
+                    AutomationProperties.AutomationId="BalanceOperations"
+                    Command="{Binding BalanceOperationsCommand}"
+                    GroupName="SmallButtons"
+                    IsChecked="{Binding ChangeTracker.BalanceOperationsChecked}"
+                    IsEnabled="{Binding EnabledBalanceOpereations}"
+                    Style="{StaticResource menuItemButton_Style}">
+                    <Viewbox StretchDirection="DownOnly">
+                    <TextBlock Style="{StaticResource normalText}" Text="{l:Translate Key={x:Static l:MultistringTags.BALANCE_OPERATIONS}}" />
+                    </Viewbox>
+                    </RadioButton>
+                            -->
+                                <RadioButton
+                                Margin="0,5,0,5"
+                                HorizontalAlignment="Left"  
+                                AutomationProperties.AutomationId="ProfitAccountig"
+                                Command="{Binding ProfitAccountingCommand}"
+                                Content="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_PROFIT_ACCOUNTING}}"
+                                GroupName="SmallButtons"
+                                IsChecked="{Binding ChangeTracker.ProfitAccountingChecked}"
+                                Style="{StaticResource menuItemButton_Style}" />
+                                <RadioButton
+                                Margin="0,5,0,5"
+                                HorizontalAlignment="Left"  
+                                AutomationProperties.AutomationId="ShopPayments"
+                                Command="{Binding ShopPaymentsCommand}"
+                                Content="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_SHOP_PAYMENTS}}"
+                                GroupName="SmallButtons"
+                                IsChecked="{Binding ChangeTracker.ShopPaymentsChecked}"
+                                IsEnabled="{Binding EnabledShopPayments}"
+                                Style="{StaticResource menuItemButton_Style}" />
+                                <!--  Terminal accounting  -->
+                                <RadioButton
+                                Margin="0,5,0,5"
+                                HorizontalAlignment="Left"  
+                                AutomationProperties.AutomationId="TerminalAccounting"
+                                Command="{Binding TerminalAccountingCommand}"
+                                Content="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_ADMIN_TERMINAL_ACCOUNTING}}"
+                                GroupName="SmallButtons"
+                                IsChecked="{Binding ChangeTracker.TerminalAccountingChecked}"
+                                IsEnabled="{Binding EnabledShopPayments}"
+                                Style="{StaticResource menuItemButton_Style}" />
+                            </StackPanel>
+                        </Expander.Content>
+                    </Expander>
+                    <Expander  Margin="25,10,25,10"        Grid.Row="2" Style="{StaticResource ExpanderMenuItem_Style}">
+                        <Expander.Header>
+                            <TextBlock Foreground="#DCDCDC" Style="{StaticResource normalText}" Text="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_FORM_USER}}" />
+                        </Expander.Header>
+                        <Expander.Content>
+                            <StackPanel Margin="17,0,0,0">
+                                <!--  search  -->
+                                <RadioButton
+                                 Margin="0,10,0,5"
+                                HorizontalAlignment="Left"  
+                                AutomationProperties.AutomationId="SearchUsers"
+                                Command="{Binding ShowSearchUsersCommand}"
+                                Content="{l:Translate Key={x:Static l:MultistringTags.SEARCH_USERS}}"
+                                GroupName="SmallButtons"
+                                IsChecked="{Binding ChangeTracker.SearchUsersChecked}"
+                                Style="{StaticResource menuItemButton_Style}" />
+                                <!--  register  -->
+                                <RadioButton
+                                 Margin="0,5,0,5"
+                                HorizontalAlignment="Left"  
+                                AutomationProperties.AutomationId="RegisterUser"
+                                Command="{Binding ShowUserRegistrationCommand}"
+                                Content="{l:Translate Key={x:Static l:MultistringTags.REGISTER_USER}}"
+                                GroupName="SmallButtons"
+                                IsChecked="{Binding ChangeTracker.RegisterUserChecked}"
+                                Style="{StaticResource menuItemButton_Style}" />
+                            </StackPanel>
+                        </Expander.Content>
+                    </Expander>
+                    <Border  Margin="25,10,25,10"  Grid.Row="3" Style="{StaticResource BorderMenuItem_Style}" Padding="0">
+                        <RadioButton
+                        Margin="0,5,0,5"
+                        HorizontalAlignment="Left"  
+                        Name="UserBigButton"
+                        Grid.Row="3"                    
+                        AutomationProperties.AutomationId="User"
+                        Command="{Binding OpenUserCategoryCommand}"
+                        Content="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_ADMIN_MENU_USER_DESC}}"
+                        FontSize="22"
+                        Foreground="#DCDCDC"
+                        IsChecked="{Binding ChangeTracker.UserChecked}">
+                            <RadioButton.Template>
+                                <ControlTemplate TargetType="RadioButton">
+                                    <ContentPresenter />
+                                </ControlTemplate>
+                            </RadioButton.Template>
+                        </RadioButton>
+                    </Border>
+                    <Expander Margin="25,10,25,10"   Grid.Row="4" Style="{StaticResource ExpanderMenuItem_Style}">
+                        <!--<DataTrigger Binding="{Binding ChangeTracker.VerifyStationChecked}" Value="True">
+                    <Setter Property="IsChecked" Value="True" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding ChangeTracker.SystemInfoChecked}" Value="True">
+                    <Setter Property="IsChecked" Value="True" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding ChangeTracker.SystemInfoMonitorsChecked}" Value="True">
+                    <Setter Property="IsChecked" Value="True" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding ChangeTracker.SystemInfoNetworkChecked}" Value="True">
+                    <Setter Property="IsChecked" Value="True" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding ChangeTracker.RestartChecked}" Value="True">
+                    <Setter Property="IsChecked" Value="True" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding ChangeTracker.PrintTestPageChecked}" Value="True">
+                    <Setter Property="IsChecked" Value="True" />
+                </DataTrigger>-->
+                        <Expander.Header>
+                            <TextBlock Foreground="#DCDCDC" Style="{StaticResource normalText}" Text="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_PRINT_SYSTEM}}" />
+                        </Expander.Header>
+                        <Expander.Content>
+                            <StackPanel Margin="17,0,0,0">
+                                <RadioButton
+                                Margin="0,10,0,5"
+                                HorizontalAlignment="Left"  
+                                AutomationProperties.AutomationId="VerifyStation"
+                                Command="{Binding VerifyCommand}"
+                                Content="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_VERIFY_STATION}}"
+                                GroupName="SmallButtons"
+                                IsChecked="{Binding ChangeTracker.VerifyStationChecked}"
+                                Style="{StaticResource menuItemButton_Style}" />
+                                <RadioButton
+                                Margin="0,5,0,5"
+                                HorizontalAlignment="Left"  
+                                AutomationProperties.AutomationId="SystemInfo"
+                                Command="{Binding ShowSystemInfoCommand}"
+                                Content="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_SYSTEM_INFO}}"
+                                GroupName="SmallButtons"
+                                IsChecked="{Binding ChangeTracker.SystemInfoChecked}"
+                                Style="{StaticResource menuItemButton_Style}" />
+                                <RadioButton
+                                Margin="0,5,0,5"
+                                HorizontalAlignment="Left"  
+                                AutomationProperties.AutomationId="Monitors"
+                                Command="{Binding ShowSystemInfoMonitorsCommand}"
+                                Content="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_MONITORS}}"
+                                GroupName="SmallButtons"
+                                IsChecked="{Binding ChangeTracker.SystemInfoMonitorsChecked}"
+                                Style="{StaticResource menuItemButton_Style}" />
+                                <RadioButton
+                                Margin="0,5,0,5"
+                                HorizontalAlignment="Left"  
+                                AutomationProperties.AutomationId="Network"
+                                Command="{Binding ShowSystemInfoNetworkCommand}"
+                                Content="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_INFO_NETWORK_TITLE}}"
+                                GroupName="SmallButtons"
+                                IsChecked="{Binding ChangeTracker.SystemInfoNetworkChecked}"
+                                Style="{StaticResource menuItemButton_Style}" />
+                                <Button
+                                Margin="0,5,0,5"
+                                HorizontalAlignment="Left"  
+                                AutomationProperties.AutomationId="SendLogs"
+                                Command="{Binding SendLogsCommand}"
+                                Content="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_FORM_SENDLOGS}}"
+                                IsEnabled="{Binding EnabledSendLogs}"
+                                Style="{StaticResource nonRadioUserProfileButton}" />
+                                <!--<TextBlock
+                                        Foreground="White"
+                                        Text="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_FORM_SENDLOGS_IN_PROGRESS}}"
+                                        Visibility="{Binding SendInProgress}" />-->
+                                <Button
+                                Margin="0,5,0,5"
+                                HorizontalAlignment="Left"  
+                                AutomationProperties.AutomationId="PrintLastPage"
+                                Command="{Binding PrintTestPageCommand}"
+                                Content="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_ADMIN_MENU_PRINTER_TEST}}"
+                                IsEnabled="{Binding EnabledShopPayments}"
+                                Style="{StaticResource nonRadioUserProfileButton}" />
+                                <RadioButton
+                                Margin="0,5,0,5"
+                                HorizontalAlignment="Left"  
+                                AutomationProperties.AutomationId="RestartTerminal"
+                                Command="{Binding RestartTerminalCommand}"
+                                Content="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_FORM_RESTART_TERMINAL}}"
+                                GroupName="SmallButtons"
+                                IsChecked="{Binding ChangeTracker.RestartChecked}"
+                                Style="{StaticResource menuItemButton_Style}" />
+                                <Button
+                                Margin="0,5,0,5"
+                                HorizontalAlignment="Left"  
+                                AutomationProperties.AutomationId="TestMode"
+                                Command="{Binding TestModeCommand}"
+                                Content="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_ADMIN_MENU_TEST_MODE}}"
+                                IsEnabled="{Binding EnabledShopPayments}"
+                                Style="{StaticResource nonRadioUserProfileButton}" />
+                                <Button
+                                Margin="0,5,0,5"
+                                HorizontalAlignment="Left"  
+                                AutomationProperties.AutomationId="Shutdown"
+                                Command="{Binding ShutdownCommand}"
+                                Content="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_SHUTDOWN}}"
+                                Style="{StaticResource nonRadioUserProfileButton}" />
+                            </StackPanel>
+                        </Expander.Content>
+                    </Expander>
+                    <Expander Margin="25,10,25,10"   Grid.Row="5" Style="{StaticResource ExpanderMenuItem_Style}">
+                        <!--<DataTrigger Binding="{Binding ChangeTracker.SearchOperatorUsersChecked}" Value="True">
+                    <Setter Property="IsChecked" Value="True" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding ChangeTracker.RegisterOperatorChecked}" Value="True">
+                    <Setter Property="IsChecked" Value="True" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding ChangeTracker.CardAndPinChecked}" Value="True">
+                    <Setter Property="IsChecked" Value="True" />
+                </DataTrigger>-->
+                        <Expander.Header>
+                            <TextBlock Foreground="#DCDCDC" Style="{StaticResource normalText}" Text="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_ADMIN_MENU_ADMINISTRATION}}" />
+                        </Expander.Header>
+                        <Expander.Content>
+                            <StackPanel  Margin="17,0,0,0">
+                                <RadioButton
+                                Margin="0,10,0,5"
+                                HorizontalAlignment="Left"  
+                                AutomationProperties.AutomationId="HiddenButton"
+                                GroupName="SmallButtons"
+                                IsChecked="{Binding ChangeTracker.AdministrationHiddenChecked}"
+                                Visibility="Collapsed" />
+                                <RadioButton
+                                Margin="0,5,0,5"
+                                HorizontalAlignment="Left"  
+                                AutomationProperties.AutomationId="SearchOperators"
+                                Command="{Binding ShowSearchOperatorsCommand}"
+                                Content="{l:Translate Key={x:Static l:MultistringTags.SEARCH_OPERATORS}}"
+                                GroupName="SmallButtons"
+                                IsChecked="{Binding ChangeTracker.SearchOperatorUsersChecked}"
+                                Style="{StaticResource menuItemButton_Style}" />
+                                <RadioButton
+                                Margin="0,5,0,5"
+                                HorizontalAlignment="Left"  
+                                AutomationProperties.AutomationId="RegisterOperator"
+                                Command="{Binding ShowOperatorRegistrationCommand}"
+                                Content="{l:Translate Key={x:Static l:MultistringTags.REGISTER_OPERATOR}}"
+                                GroupName="SmallButtons"
+                                IsChecked="{Binding ChangeTracker.RegisterOperatorChecked}"
+                                Style="{StaticResource menuItemButton_Style}" />
+                                <RadioButton
+                                Margin="0,5,0,5"
+                                HorizontalAlignment="Left"  
+                                AutomationProperties.AutomationId="CardAndPin"
+                                Command="{Binding ShowCardPin}"
+                                GroupName="SmallButtons"
+                                IsChecked="{Binding ChangeTracker.CardAndPinChecked}"
+                                Style="{StaticResource menuItemButton_Style}">
+                                    <Viewbox StretchDirection="DownOnly">
+                                        <Grid>
+                                            <TextBlock
+                                            Style="{StaticResource normalText}"
+                                            Text="{l:Translate Key={x:Static l:MultistringTags.CARD_AND_PIN}}"
+                                            Visibility="{Binding StationRepository.IsIdCardEnabled, Converter={StaticResource myBooleanToVisibilityConverter}}" />
+                                            <TextBlock
+                                            Style="{StaticResource normalText}"
+                                            Text="{l:Translate Key={x:Static l:MultistringTags.BARCODECARD_AND_PIN}}"
+                                            Visibility="{Binding StationRepository.IsIdCardEnabled, Converter={StaticResource myInverseBooleanToVisibilityConverter}}" />
+                                        </Grid>
+                                    </Viewbox>
+                                </RadioButton>
+                            </StackPanel>
+                        </Expander.Content>
+                    </Expander>
+                </Grid>
+            </ScrollViewer>
+        </Expander>
+    
+        <Grid
+            Grid.Row="1"
+            Grid.ColumnSpan="2"
+            VerticalAlignment="Top">
+            <baseObjects:MyContentRegion baseObjects:MyRegionManager.RegionName="UserManagementKeyboardRegion" />
+        </Grid>
+    </Grid>
+</UserControl>

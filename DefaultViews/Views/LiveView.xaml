@@ -1,0 +1,1294 @@
+﻿<UserControl
+    x:Class="DefaultViews.Views.LiveView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:SportBetting.WPF.Prism.Shared.Converters;assembly=SportBetting.WPF.Prism.Shared"
+    xmlns:converters2="clr-namespace:SportBetting.WPF.Prism.Shared.Converters;assembly=SportBetting.WPF.Prism.Shared"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:l="clr-namespace:TranslationByMarkupExtension;assembly=TranslationByMarkupExtension"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:shared="clr-namespace:SportBetting.WPF.Prism.Shared;assembly=SportBetting.WPF.Prism.Shared"
+    xmlns:viewModels2="clr-namespace:ViewModels.ViewModels;assembly=ViewModels"
+    xmlns:viewObjects="clr-namespace:SportRadar.DAL.ViewObjects;assembly=DAL"
+    x:Name="MatchesViewControl"
+    d:DataContext="{d:DesignInstance Type=viewModels2:LiveViewModel}"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <ControlTemplate x:Key="SportsBarCheckboxOrange" TargetType="CheckBox">
+            <BulletDecorator HorizontalAlignment="Center" Background="Transparent">
+                <BulletDecorator.Bullet>
+                    <StackPanel
+                        HorizontalAlignment="Center"
+                        Background="Transparent"
+                        Orientation="Vertical">
+                        <Image
+                            x:Name="imgTopToggleButton"
+                            Width="46"
+                            Height="46"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Source="{Binding Icon}" />
+                        <TextBlock
+                            x:Name="sportsBarText"
+                            Margin="0,5,0,0"
+                            HorizontalAlignment="Center"
+                            FontSize="22"
+                            FontWeight="Normal"
+                            Foreground="#fff"
+                            Opacity="0.9"
+                            Text="{Binding SportName}" />
+                    </StackPanel>
+                </BulletDecorator.Bullet>
+                <ContentPresenter
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    RecognizesAccessKey="True" />
+            </BulletDecorator>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter TargetName="imgTopToggleButton" Property="Source" Value="{Binding IconActive}" />
+                    <Setter TargetName="sportsBarText" Property="Foreground" Value="#FFF" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <Style x:Key="soccerExpander" TargetType="{x:Type Expander}">
+            <Setter Property="Foreground" Value="Gray" />
+            <Setter Property="BorderBrush" Value="Gray" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="SnapsToDevicePixels" Value="true" />
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.CanContentScroll" Value="true" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Expander}">
+                        <DockPanel>
+                            <ToggleButton
+                                x:Name="ExpanderButton"
+                                Height="35"
+                                Content="{TemplateBinding Header}"
+                                DockPanel.Dock="Top"
+                                IsChecked="{Binding Path=IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
+                                OverridesDefaultStyle="True">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition />
+                                                <ColumnDefinition Width="32" />
+                                            </Grid.ColumnDefinitions>
+                                            <Border
+                                                x:Name="Border"
+                                                Grid.ColumnSpan="2"
+                                                BorderBrush="Gray"
+                                                BorderThickness="2"
+                                                CornerRadius="15">
+                                                <Border.Background>
+                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                        <GradientStop Offset="0" Color="#FF90C696" />
+                                                        <GradientStop Offset="1" Color="#FF3F8145" />
+                                                    </LinearGradientBrush>
+                                                </Border.Background>
+                                            </Border>
+                                            <Image
+                                                Width="22"
+                                                Height="22"
+                                                Margin="10,2,2,2"
+                                                HorizontalAlignment="Left"
+                                                Source="{converters:ResolveImagePath Path=LiveView/socker-ball.png}" />
+                                            <StackPanel Margin="40,0,0,0" Orientation="Horizontal">
+                                                <TextBlock
+                                                    VerticalAlignment="Center"
+                                                    FontFamily="Myriad Pro"
+                                                    FontSize="22"
+                                                    FontWeight="Normal"
+                                                    Foreground="#fff"
+                                                    Opacity="0.9"
+                                                    Text="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_FORM_SOCCER}}" />
+                                                <TextBlock
+                                                    VerticalAlignment="Center"
+                                                    FontFamily="Myriad Pro"
+                                                    FontSize="22"
+                                                    FontWeight="Normal"
+                                                    Foreground="#fff"
+                                                    Opacity="0.9"
+                                                    Text="{Binding SoccerMatches.Count, StringFormat=' (\{0\})'}" />
+                                            </StackPanel>
+
+                                            <Image
+                                                Name="arrow"
+                                                Grid.Column="1"
+                                                Width="22"
+                                                Height="22"
+                                                Margin="0,0,5,0"
+                                                HorizontalAlignment="Right"
+                                                Source="{converters:ResolveImagePath Path=LiveView/strelka-close.png}" />
+                                        </Grid>
+                                        <ControlTemplate.Triggers>
+
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter TargetName="Border" Property="Background" Value="LightGray" />
+                                                <Setter TargetName="Border" Property="BorderBrush" Value="Gray" />
+                                                <Setter Property="Foreground" Value="Gray" />
+                                            </Trigger>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="arrow" Property="Source" Value="{converters:ResolveImagePath Path=LiveView/strelka-open.png}" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+
+                            </ToggleButton>
+                            <ContentPresenter
+                                x:Name="ExpanderContent"
+                                ContentSource="Content"
+                                DockPanel.Dock="Bottom">
+                                <ContentPresenter.LayoutTransform>
+                                    <ScaleTransform ScaleY="0" />
+                                </ContentPresenter.LayoutTransform>
+                            </ContentPresenter>
+                        </DockPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsExpanded" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="ExpanderContent"
+                                                Storyboard.TargetProperty="(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleY)"
+                                                To="1"
+                                                Duration="0:0:0.4" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="ExpanderContent"
+                                                Storyboard.TargetProperty="(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleY)"
+                                                To="0"
+                                                Duration="0:0:0.4" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="tennisExpander" TargetType="{x:Type Expander}">
+            <Setter Property="Foreground" Value="Gray" />
+            <Setter Property="BorderBrush" Value="Gray" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="SnapsToDevicePixels" Value="true" />
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.CanContentScroll" Value="true" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Expander}">
+                        <DockPanel>
+                            <ToggleButton
+                                x:Name="ExpanderButton"
+                                Height="35"
+                                Content="{TemplateBinding Header}"
+                                DockPanel.Dock="Top"
+                                IsChecked="{Binding Path=IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
+                                OverridesDefaultStyle="True">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition />
+                                                <ColumnDefinition Width="32" />
+                                            </Grid.ColumnDefinitions>
+                                            <Border
+                                                x:Name="Border"
+                                                Grid.ColumnSpan="2"
+                                                BorderBrush="Gray"
+                                                BorderThickness="2"
+                                                CornerRadius="15">
+                                                <Border.Background>
+                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                        <GradientStop Offset="0" Color="#DDE04A" />
+                                                        <GradientStop Offset="1" Color="#979F0D" />
+                                                    </LinearGradientBrush>
+                                                </Border.Background>
+                                            </Border>
+                                            <Image
+                                                Width="22"
+                                                Height="22"
+                                                Margin="10,2,2,2"
+                                                HorizontalAlignment="Left"
+                                                Source="{converters:ResolveImagePath Path=LiveView/tennis-ball.png}" />
+                                            <StackPanel Margin="40,0,0,0" Orientation="Horizontal">
+                                                <TextBlock
+                                                    VerticalAlignment="Center"
+                                                    FontFamily="Myriad Pro"
+                                                    FontSize="22"
+                                                    FontWeight="Normal"
+                                                    Foreground="#fff"
+                                                    Opacity="0.9"
+                                                    Text="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_FORM_TENNIS}}" />
+                                                <TextBlock
+                                                    VerticalAlignment="Center"
+                                                    FontFamily="Myriad Pro"
+                                                    FontSize="22"
+                                                    FontWeight="Normal"
+                                                    Foreground="#fff"
+                                                    Opacity="0.9"
+                                                    Text="{Binding TennisMatches.Count, StringFormat=' (\{0\})'}" />
+                                            </StackPanel>
+                                            <Image
+                                                Name="arrow"
+                                                Grid.Column="1"
+                                                Width="22"
+                                                Height="22"
+                                                Margin="0,0,5,0"
+                                                HorizontalAlignment="Right"
+                                                Source="{converters:ResolveImagePath Path=LiveView/strelka-close.png}" />
+                                        </Grid>
+                                        <ControlTemplate.Triggers>
+
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter TargetName="Border" Property="Background" Value="LightGray" />
+                                                <Setter TargetName="Border" Property="BorderBrush" Value="Gray" />
+                                                <Setter Property="Foreground" Value="Gray" />
+                                            </Trigger>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="arrow" Property="Source" Value="{converters:ResolveImagePath Path=LiveView/strelka-open.png}" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+
+                            </ToggleButton>
+                            <ContentPresenter
+                                x:Name="ExpanderContent"
+                                ContentSource="Content"
+                                DockPanel.Dock="Bottom">
+                                <ContentPresenter.LayoutTransform>
+                                    <ScaleTransform ScaleY="0" />
+                                </ContentPresenter.LayoutTransform>
+                            </ContentPresenter>
+                        </DockPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsExpanded" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="ExpanderContent"
+                                                Storyboard.TargetProperty="(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleY)"
+                                                To="1"
+                                                Duration="0:0:0.4" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="ExpanderContent"
+                                                Storyboard.TargetProperty="(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleY)"
+                                                To="0"
+                                                Duration="0:0:0.4" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="basketballExpander" TargetType="{x:Type Expander}">
+            <Setter Property="Foreground" Value="Gray" />
+            <Setter Property="BorderBrush" Value="Gray" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="SnapsToDevicePixels" Value="true" />
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.CanContentScroll" Value="true" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Expander}">
+                        <DockPanel>
+                            <ToggleButton
+                                x:Name="ExpanderButton"
+                                Height="35"
+                                Content="{TemplateBinding Header}"
+                                DockPanel.Dock="Top"
+                                IsChecked="{Binding Path=IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
+                                OverridesDefaultStyle="True">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition />
+                                                <ColumnDefinition Width="32" />
+                                            </Grid.ColumnDefinitions>
+                                            <Border
+                                                x:Name="Border"
+                                                Grid.ColumnSpan="2"
+                                                BorderBrush="Gray"
+                                                BorderThickness="2"
+                                                CornerRadius="15">
+                                                <Border.Background>
+                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                        <GradientStop Offset="0" Color="#D8A362" />
+                                                        <GradientStop Offset="1" Color="#AF6828" />
+                                                    </LinearGradientBrush>
+                                                </Border.Background>
+                                            </Border>
+                                            <Image
+                                                Width="22"
+                                                Height="22"
+                                                Margin="10,2,2,2"
+                                                HorizontalAlignment="Left"
+                                                Source="{converters:ResolveImagePath Path=LiveView/Basket-ball.png}" />
+                                            <StackPanel Margin="40,0,0,0" Orientation="Horizontal">
+                                                <TextBlock
+                                                    VerticalAlignment="Center"
+                                                    FontFamily="Myriad Pro"
+                                                    FontSize="22"
+                                                    FontWeight="Normal"
+                                                    Foreground="#fff"
+                                                    Opacity="0.9"
+                                                    Text="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_FORM_BASKETBALL}}" />
+                                                <TextBlock
+                                                    VerticalAlignment="Center"
+                                                    FontFamily="Myriad Pro"
+                                                    FontSize="22"
+                                                    FontWeight="Normal"
+                                                    Foreground="#fff"
+                                                    Opacity="0.9"
+                                                    Text="{Binding BasketballMatches.Count, StringFormat=' (\{0\})'}" />
+                                            </StackPanel>
+                                            <Image
+                                                Name="arrow"
+                                                Grid.Column="1"
+                                                Width="22"
+                                                Height="22"
+                                                Margin="0,0,5,0"
+                                                HorizontalAlignment="Right"
+                                                Source="{converters:ResolveImagePath Path=LiveView/strelka-close.png}" />
+                                        </Grid>
+                                        <ControlTemplate.Triggers>
+
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter TargetName="Border" Property="Background" Value="LightGray" />
+                                                <Setter TargetName="Border" Property="BorderBrush" Value="Gray" />
+                                                <Setter Property="Foreground" Value="Gray" />
+                                            </Trigger>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="arrow" Property="Source" Value="{converters:ResolveImagePath Path=LiveView/strelka-open.png}" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+
+                            </ToggleButton>
+                            <ContentPresenter
+                                x:Name="ExpanderContent"
+                                ContentSource="Content"
+                                DockPanel.Dock="Bottom">
+                                <ContentPresenter.LayoutTransform>
+                                    <ScaleTransform ScaleY="0" />
+                                </ContentPresenter.LayoutTransform>
+                            </ContentPresenter>
+                        </DockPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsExpanded" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="ExpanderContent"
+                                                Storyboard.TargetProperty="(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleY)"
+                                                To="1"
+                                                Duration="0:0:0.4" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="ExpanderContent"
+                                                Storyboard.TargetProperty="(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleY)"
+                                                To="0"
+                                                Duration="0:0:0.4" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="hockeyExpander" TargetType="{x:Type Expander}">
+            <Setter Property="Foreground" Value="Gray" />
+            <Setter Property="BorderBrush" Value="Gray" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="SnapsToDevicePixels" Value="true" />
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.CanContentScroll" Value="true" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Expander}">
+                        <DockPanel>
+                            <ToggleButton
+                                x:Name="ExpanderButton"
+                                Height="35"
+                                Content="{TemplateBinding Header}"
+                                DockPanel.Dock="Top"
+                                IsChecked="{Binding Path=IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
+                                OverridesDefaultStyle="True">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition />
+                                                <ColumnDefinition Width="32" />
+                                            </Grid.ColumnDefinitions>
+                                            <Border
+                                                x:Name="Border"
+                                                Grid.ColumnSpan="2"
+                                                BorderBrush="Gray"
+                                                BorderThickness="2"
+                                                CornerRadius="15">
+                                                <Border.Background>
+                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                        <GradientStop Offset="0" Color="#73B0D8" />
+                                                        <GradientStop Offset="1" Color="#1A5181" />
+                                                    </LinearGradientBrush>
+                                                </Border.Background>
+                                            </Border>
+                                            <Image
+                                                Width="22"
+                                                Height="22"
+                                                Margin="10,2,2,2"
+                                                HorizontalAlignment="Left"
+                                                Source="{converters:ResolveImagePath Path=LiveView/hockey-ball.png}" />
+                                            <StackPanel Margin="40,0,0,0" Orientation="Horizontal">
+                                                <TextBlock
+                                                    VerticalAlignment="Center"
+                                                    FontFamily="Myriad Pro"
+                                                    FontSize="22"
+                                                    FontWeight="Normal"
+                                                    Foreground="#fff"
+                                                    Opacity="0.9"
+                                                    Text="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_FORM_ICEHOCKEY}}" />
+                                                <TextBlock
+                                                    VerticalAlignment="Center"
+                                                    FontFamily="Myriad Pro"
+                                                    FontSize="22"
+                                                    FontWeight="Normal"
+                                                    Foreground="#fff"
+                                                    Opacity="0.9"
+                                                    Text="{Binding HockeyMatches.Count, StringFormat=' (\{0\})'}" />
+                                            </StackPanel>
+                                            <Image
+                                                Name="arrow"
+                                                Grid.Column="1"
+                                                Width="22"
+                                                Height="22"
+                                                Margin="0,0,5,0"
+                                                HorizontalAlignment="Right"
+                                                Source="{converters:ResolveImagePath Path=LiveView/strelka-close.png}" />
+                                        </Grid>
+                                        <ControlTemplate.Triggers>
+
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter TargetName="Border" Property="Background" Value="LightGray" />
+                                                <Setter TargetName="Border" Property="BorderBrush" Value="Gray" />
+                                                <Setter Property="Foreground" Value="Gray" />
+                                            </Trigger>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="arrow" Property="Source" Value="{converters:ResolveImagePath Path=LiveView/strelka-open.png}" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+
+                            </ToggleButton>
+                            <ContentPresenter
+                                x:Name="ExpanderContent"
+                                ContentSource="Content"
+                                DockPanel.Dock="Bottom">
+                                <ContentPresenter.LayoutTransform>
+                                    <ScaleTransform ScaleY="0" />
+                                </ContentPresenter.LayoutTransform>
+                            </ContentPresenter>
+                        </DockPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsExpanded" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="ExpanderContent"
+                                                Storyboard.TargetProperty="(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleY)"
+                                                To="1"
+                                                Duration="0:0:0.4" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="ExpanderContent"
+                                                Storyboard.TargetProperty="(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleY)"
+                                                To="0"
+                                                Duration="0:0:0.4" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="rugbyExpander" TargetType="{x:Type Expander}">
+            <Setter Property="Foreground" Value="Gray" />
+            <Setter Property="BorderBrush" Value="Gray" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="SnapsToDevicePixels" Value="true" />
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.CanContentScroll" Value="true" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Expander}">
+                        <DockPanel>
+                            <ToggleButton
+                                x:Name="ExpanderButton"
+                                Height="35"
+                                Content="{TemplateBinding Header}"
+                                DockPanel.Dock="Top"
+                                IsChecked="{Binding Path=IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
+                                OverridesDefaultStyle="True">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition />
+                                                <ColumnDefinition Width="32" />
+                                            </Grid.ColumnDefinitions>
+                                            <Border
+                                                x:Name="Border"
+                                                Grid.ColumnSpan="2"
+                                                BorderBrush="Gray"
+                                                BorderThickness="2"
+                                                CornerRadius="15">
+                                                <Border.Background>
+                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                        <GradientStop Offset="0" Color="#989E98" />
+                                                        <GradientStop Offset="1" Color="#963D2D" />
+                                                    </LinearGradientBrush>
+                                                </Border.Background>
+                                            </Border>
+                                            <Image
+                                                Width="22"
+                                                Height="22"
+                                                Margin="10,2,2,2"
+                                                HorizontalAlignment="Left"
+                                                Source="{converters:ResolveImagePath Path=LiveView/rugby-ball.png}" />
+                                            <StackPanel Margin="40,0,0,0" Orientation="Horizontal">
+                                                <TextBlock
+                                                    VerticalAlignment="Center"
+                                                    FontFamily="Myriad Pro"
+                                                    FontSize="22"
+                                                    FontWeight="Normal"
+                                                    Foreground="#fff"
+                                                    Opacity="0.9"
+                                                    Text="Rugby" />
+                                                <!--  Text="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_FORM_RUGBY}}"  -->
+                                                <TextBlock
+                                                    VerticalAlignment="Center"
+                                                    FontFamily="Myriad Pro"
+                                                    FontSize="22"
+                                                    FontWeight="Normal"
+                                                    Foreground="#fff"
+                                                    Opacity="0.9"
+                                                    Text="{Binding RugbyMatches.Count, StringFormat=' (\{0\})'}" />
+                                            </StackPanel>
+                                            <Image
+                                                Name="arrow"
+                                                Grid.Column="1"
+                                                Width="22"
+                                                Height="22"
+                                                Margin="0,0,5,0"
+                                                HorizontalAlignment="Right"
+                                                Source="{converters:ResolveImagePath Path=LiveView/strelka-close.png}" />
+                                        </Grid>
+                                        <ControlTemplate.Triggers>
+
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter TargetName="Border" Property="Background" Value="LightGray" />
+                                                <Setter TargetName="Border" Property="BorderBrush" Value="Gray" />
+                                                <Setter Property="Foreground" Value="Gray" />
+                                            </Trigger>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="arrow" Property="Source" Value="{converters:ResolveImagePath Path=LiveView/strelka-open.png}" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+
+                            </ToggleButton>
+                            <ContentPresenter
+                                x:Name="ExpanderContent"
+                                ContentSource="Content"
+                                DockPanel.Dock="Bottom">
+                                <ContentPresenter.LayoutTransform>
+                                    <ScaleTransform ScaleY="0" />
+                                </ContentPresenter.LayoutTransform>
+                            </ContentPresenter>
+                        </DockPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsExpanded" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="ExpanderContent"
+                                                Storyboard.TargetProperty="(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleY)"
+                                                To="1"
+                                                Duration="0:0:0.4" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="ExpanderContent"
+                                                Storyboard.TargetProperty="(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleY)"
+                                                To="0"
+                                                Duration="0:0:0.4" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="handballExpander" TargetType="{x:Type Expander}">
+            <Setter Property="Foreground" Value="Gray" />
+            <Setter Property="BorderBrush" Value="Gray" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="SnapsToDevicePixels" Value="true" />
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.CanContentScroll" Value="true" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Expander}">
+                        <DockPanel>
+                            <ToggleButton
+                                x:Name="ExpanderButton"
+                                Height="35"
+                                Content="{TemplateBinding Header}"
+                                DockPanel.Dock="Top"
+                                IsChecked="{Binding Path=IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
+                                OverridesDefaultStyle="True">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition />
+                                                <ColumnDefinition Width="32" />
+                                            </Grid.ColumnDefinitions>
+                                            <Border
+                                                x:Name="Border"
+                                                Grid.ColumnSpan="2"
+                                                BorderBrush="Gray"
+                                                BorderThickness="2"
+                                                CornerRadius="15">
+                                                <Border.Background>
+                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                        <GradientStop Offset="0" Color="#F4F4F4" />
+                                                        <GradientStop Offset="1" Color="#C8C8CA" />
+                                                    </LinearGradientBrush>
+                                                </Border.Background>
+                                            </Border>
+                                            <Image
+                                                Width="22"
+                                                Height="22"
+                                                Margin="10,2,2,2"
+                                                HorizontalAlignment="Left"
+                                                Source="{converters:ResolveImagePath Path=LiveView/hand-ball.png}" />
+                                            <StackPanel Margin="40,0,0,0" Orientation="Horizontal">
+                                                <TextBlock
+                                                    VerticalAlignment="Center"
+                                                    FontFamily="Myriad Pro"
+                                                    FontSize="22"
+                                                    FontWeight="Normal"
+                                                    Foreground="#fff"
+                                                    Opacity="0.9"
+                                                    Text="Handball" />
+                                                <!--  Text="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_FORM_RUGBY}}"  -->
+                                                <TextBlock
+                                                    VerticalAlignment="Center"
+                                                    FontFamily="Myriad Pro"
+                                                    FontSize="22"
+                                                    FontWeight="Normal"
+                                                    Foreground="#fff"
+                                                    Opacity="0.9"
+                                                    Text="{Binding HandballMatches.Count, StringFormat=' (\{0\})'}" />
+                                            </StackPanel>
+                                            <Image
+                                                Name="arrow"
+                                                Grid.Column="1"
+                                                Width="22"
+                                                Height="22"
+                                                Margin="0,0,5,0"
+                                                HorizontalAlignment="Right"
+                                                Source="{converters:ResolveImagePath Path=LiveView/strelka-close.png}" />
+                                        </Grid>
+                                        <ControlTemplate.Triggers>
+
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter TargetName="Border" Property="Background" Value="LightGray" />
+                                                <Setter TargetName="Border" Property="BorderBrush" Value="Gray" />
+                                                <Setter Property="Foreground" Value="Gray" />
+                                            </Trigger>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="arrow" Property="Source" Value="{converters:ResolveImagePath Path=LiveView/strelka-open.png}" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+
+                            </ToggleButton>
+                            <ContentPresenter
+                                x:Name="ExpanderContent"
+                                ContentSource="Content"
+                                DockPanel.Dock="Bottom">
+                                <ContentPresenter.LayoutTransform>
+                                    <ScaleTransform ScaleY="0" />
+                                </ContentPresenter.LayoutTransform>
+                            </ContentPresenter>
+                        </DockPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsExpanded" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="ExpanderContent"
+                                                Storyboard.TargetProperty="(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleY)"
+                                                To="1"
+                                                Duration="0:0:0.4" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="ExpanderContent"
+                                                Storyboard.TargetProperty="(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleY)"
+                                                To="0"
+                                                Duration="0:0:0.4" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="volleyballExpander" TargetType="{x:Type Expander}">
+            <Setter Property="Foreground" Value="Gray" />
+            <Setter Property="BorderBrush" Value="Gray" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="SnapsToDevicePixels" Value="true" />
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.CanContentScroll" Value="true" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Expander}">
+                        <DockPanel>
+                            <ToggleButton
+                                x:Name="ExpanderButton"
+                                Height="35"
+                                Content="{TemplateBinding Header}"
+                                DockPanel.Dock="Top"
+                                IsChecked="{Binding Path=IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
+                                OverridesDefaultStyle="True">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition />
+                                                <ColumnDefinition Width="32" />
+                                            </Grid.ColumnDefinitions>
+                                            <Border
+                                                x:Name="Border"
+                                                Grid.ColumnSpan="2"
+                                                BorderBrush="Gray"
+                                                BorderThickness="2"
+                                                CornerRadius="15">
+                                                <Border.Background>
+                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                        <GradientStop Offset="0" Color="#FDC903" />
+                                                        <GradientStop Offset="1" Color="#3685D3" />
+                                                    </LinearGradientBrush>
+                                                </Border.Background>
+                                            </Border>
+                                            <Image
+                                                Width="22"
+                                                Height="22"
+                                                Margin="10,2,2,2"
+                                                HorizontalAlignment="Left"
+                                                Source="{converters:ResolveImagePath Path=LiveView/volley-ball.png}" />
+                                            <StackPanel Margin="40,0,0,0" Orientation="Horizontal">
+                                                <TextBlock
+                                                    VerticalAlignment="Center"
+                                                    FontFamily="Myriad Pro"
+                                                    FontSize="22"
+                                                    FontWeight="Normal"
+                                                    Foreground="#fff"
+                                                    Opacity="0.9"
+                                                    Text="Volleyball" />
+                                                <!--  Text="{l:Translate Key={x:Static l:MultistringTags.TERMINAL_FORM_RUGBY}}"  -->
+                                                <TextBlock
+                                                    VerticalAlignment="Center"
+                                                    FontFamily="Myriad Pro"
+                                                    FontSize="22"
+                                                    FontWeight="Normal"
+                                                    Foreground="#fff"
+                                                    Opacity="0.9"
+                                                    Text="{Binding VolleyballMatches.Count, StringFormat=' (\{0\})'}" />
+                                            </StackPanel>
+                                            <Image
+                                                Name="arrow"
+                                                Grid.Column="1"
+                                                Width="22"
+                                                Height="22"
+                                                Margin="0,0,5,0"
+                                                HorizontalAlignment="Right"
+                                                Source="{converters:ResolveImagePath Path=LiveView/strelka-close.png}" />
+                                        </Grid>
+                                        <ControlTemplate.Triggers>
+
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter TargetName="Border" Property="Background" Value="LightGray" />
+                                                <Setter TargetName="Border" Property="BorderBrush" Value="Gray" />
+                                                <Setter Property="Foreground" Value="Gray" />
+                                            </Trigger>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="arrow" Property="Source" Value="{converters:ResolveImagePath Path=LiveView/strelka-open.png}" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+
+                            </ToggleButton>
+                            <ContentPresenter
+                                x:Name="ExpanderContent"
+                                ContentSource="Content"
+                                DockPanel.Dock="Bottom">
+                                <ContentPresenter.LayoutTransform>
+                                    <ScaleTransform ScaleY="0" />
+                                </ContentPresenter.LayoutTransform>
+                            </ContentPresenter>
+                        </DockPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsExpanded" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="ExpanderContent"
+                                                Storyboard.TargetProperty="(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleY)"
+                                                To="1"
+                                                Duration="0:0:0.4" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="ExpanderContent"
+                                                Storyboard.TargetProperty="(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleY)"
+                                                To="0"
+                                                Duration="0:0:0.4" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </UserControl.Resources>
+
+    <UserControl.Background>
+        <ImageBrush
+            AlignmentX="Left"
+            AlignmentY="Top"
+            ImageSource="{converters2:ResolveImagePath Path=LiveView/fon.png}"
+            Stretch="None"
+            TileMode="Tile"
+            Viewport="0,0,33,36"
+            ViewportUnits="Absolute" />
+    </UserControl.Background>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid
+            Grid.Row="0"
+            MinHeight="109"
+            HorizontalAlignment="Stretch"
+            Visibility="{Binding SportsBarVisibility}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>        
+
+            <ScrollViewer
+                x:Name="SportsBarScrollLive"
+                Grid.Column="1"
+                Margin="15,0,15,0"
+                PanningMode="HorizontalOnly"
+                ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                <ItemsControl ItemsSource="{Binding SportsBarItemsLive}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel
+                                MinWidth="135"
+                                Margin="0,5,0,5"
+                                VerticalAlignment="Center"
+                                Orientation="Vertical">
+                                <CheckBox
+                                    Grid.Column="0"
+                                    HorizontalAlignment="Center"
+                                    Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorLevel=2, AncestorType={x:Type Grid}}, Path=DataContext.CheckedBox}"
+                                    CommandParameter="{Binding}"
+                                    IsChecked="{Binding IsChecked, Mode=TwoWay}"
+                                    Template="{StaticResource SportsBarCheckboxOrange}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="ScrollChanged">
+                        <i:InvokeCommandAction Command="{Binding LiveScrollChangedCommand}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </ScrollViewer>
+        </Grid>
+
+
+
+
+
+        <!--  Sports liveview  -->
+        <ScrollViewer Grid.Row="1">
+            <StackPanel Grid.Row="1" Orientation="Vertical">
+
+                <Expander
+                    Margin="15,15,15,0"
+                    IsExpanded="{Binding SoccerExpanderIsExpanded}"
+                    Style="{StaticResource soccerExpander}"
+                    Visibility="{Binding SoccerVisibility}">
+                    <Border
+                        Margin="15,0,15,0"
+                        BorderBrush="Green"
+                        BorderThickness="2">
+                        <StackPanel Width="Auto">
+                            <StackPanel.Background>
+                                <ImageBrush
+                                    AlignmentX="Left"
+                                    AlignmentY="Top"
+                                    ImageSource="{converters2:ResolveImagePath Path=LiveView/socker-fon.png}"
+                                    Stretch="None"
+                                    TileMode="Tile"
+                                    Viewport="0,0,3,3"
+                                    ViewportUnits="Absolute" />
+                            </StackPanel.Background>
+                            <ItemsControl ItemTemplate="{StaticResource CommonLiveMatchTemplate}" ItemsSource="{Binding SoccerMatches}" />
+                        </StackPanel>
+                    </Border>
+                </Expander>
+
+
+                <Expander
+                    Margin="15,15,15,0"
+                    IsExpanded="{Binding TennisExpanderIsExpanded}"
+                    Style="{StaticResource tennisExpander}"
+                    Visibility="{Binding TennisVisibility}">
+                    <Border
+                        Margin="15,0,15,0"
+                        BorderBrush="Yellow"
+                        BorderThickness="2">
+                        <StackPanel Width="Auto">
+                            <StackPanel.Background>
+                                <ImageBrush
+                                    AlignmentX="Left"
+                                    AlignmentY="Top"
+                                    ImageSource="{converters2:ResolveImagePath Path=LiveView/tennis-fon.png}"
+                                    Stretch="None"
+                                    TileMode="Tile"
+                                    Viewport="0,0,3,3"
+                                    ViewportUnits="Absolute" />
+                            </StackPanel.Background>
+                            <ItemsControl ItemTemplate="{StaticResource CommonLiveMatchTemplate}" ItemsSource="{Binding TennisMatches}" />
+                        </StackPanel>
+                    </Border>
+                </Expander>
+
+
+
+                <Expander
+                    Margin="15,15,15,0"
+                    IsExpanded="{Binding BasketballExpanderIsExpanded}"
+                    Style="{StaticResource basketballExpander}"
+                    Visibility="{Binding BasketballVisibility}">
+                    <Border
+                        Margin="15,0,15,0"
+                        BorderBrush="Orange"
+                        BorderThickness="2">
+                        <StackPanel Width="Auto">
+                            <StackPanel.Background>
+                                <ImageBrush
+                                    AlignmentX="Left"
+                                    AlignmentY="Top"
+                                    ImageSource="{converters2:ResolveImagePath Path=LiveView/Basketball-fon.png}"
+                                    Stretch="None"
+                                    TileMode="Tile"
+                                    Viewport="0,0,3,3"
+                                    ViewportUnits="Absolute" />
+                            </StackPanel.Background>
+                            <ItemsControl ItemTemplate="{StaticResource CommonLiveMatchTemplate}" ItemsSource="{Binding BasketballMatches}" />
+                        </StackPanel>
+                    </Border>
+                </Expander>
+
+
+                <Expander
+                    Margin="15,15,15,0"
+                    IsExpanded="{Binding HockeyExpanderIsExpanded}"
+                    Style="{StaticResource hockeyExpander}"
+                    Visibility="{Binding HockeyVisibility}">
+                    <Border
+                        Margin="15,0,15,0"
+                        BorderBrush="Blue"
+                        BorderThickness="2">
+                        <StackPanel Width="Auto">
+                            <StackPanel.Background>
+                                <ImageBrush
+                                    AlignmentX="Left"
+                                    AlignmentY="Top"
+                                    ImageSource="{converters2:ResolveImagePath Path=LiveView/Hokkey-fon.png}"
+                                    Stretch="None"
+                                    TileMode="Tile"
+                                    Viewport="0,0,3,3"
+                                    ViewportUnits="Absolute" />
+                            </StackPanel.Background>
+                            <ItemsControl ItemTemplate="{StaticResource CommonLiveMatchTemplate}" ItemsSource="{Binding HockeyMatches}" />
+                        </StackPanel>
+                    </Border>
+                </Expander>
+
+                <Expander
+                    Margin="15,15,15,0"
+                    IsExpanded="{Binding RugbyExpanderIsExpanded}"
+                    Style="{StaticResource rugbyExpander}"
+                    Visibility="{Binding RugbyVisibility}">
+                    <Border
+                        Margin="15,0,15,0"
+                        BorderBrush="OrangeRed"
+                        BorderThickness="2">
+                        <StackPanel Width="Auto">
+                            <StackPanel.Background>
+                                <ImageBrush
+                                    AlignmentX="Left"
+                                    AlignmentY="Top"
+                                    ImageSource="{converters2:ResolveImagePath Path=LiveView/rugby-fon.png}"
+                                    Stretch="None"
+                                    TileMode="Tile"
+                                    Viewport="0,0,3,3"
+                                    ViewportUnits="Absolute" />
+                            </StackPanel.Background>
+                            <ItemsControl ItemTemplate="{StaticResource CommonLiveMatchTemplate}" ItemsSource="{Binding RugbyMatches}" />
+                        </StackPanel>
+                    </Border>
+                </Expander>
+
+                <Expander
+                    Margin="15,15,15,0"
+                    IsExpanded="{Binding HandballExpanderIsExpanded}"
+                    Style="{StaticResource handballExpander}"
+                    Visibility="{Binding HandballVisibility}">
+                    <Border
+                        Margin="15,0,15,0"
+                        BorderBrush="Gray"
+                        BorderThickness="2">
+                        <StackPanel Width="Auto">
+                            <StackPanel.Background>
+                                <ImageBrush
+                                    AlignmentX="Left"
+                                    AlignmentY="Top"
+                                    ImageSource="{converters2:ResolveImagePath Path=LiveView/handball-fon.png}"
+                                    Stretch="None"
+                                    TileMode="Tile"
+                                    Viewport="0,0,3,3"
+                                    ViewportUnits="Absolute" />
+                            </StackPanel.Background>
+                            <ItemsControl ItemTemplate="{StaticResource CommonLiveMatchTemplate}" ItemsSource="{Binding HandballMatches}" />
+                        </StackPanel>
+                    </Border>
+                </Expander>
+
+                <Expander
+                    Margin="15,15,15,0"
+                    IsExpanded="{Binding VolleyballExpanderIsExpanded}"
+                    Style="{StaticResource volleyballExpander}"
+                    Visibility="{Binding VolleyballVisibility}">
+                    <Border
+                        Margin="15,0,15,0"
+                        BorderBrush="LightBlue"
+                        BorderThickness="2">
+                        <StackPanel Width="Auto">
+                            <StackPanel.Background>
+                                <ImageBrush
+                                    AlignmentX="Left"
+                                    AlignmentY="Top"
+                                    ImageSource="{converters2:ResolveImagePath Path=LiveView/volleyball-fon.png}"
+                                    Stretch="None"
+                                    TileMode="Tile"
+                                    Viewport="0,0,3,3"
+                                    ViewportUnits="Absolute" />
+                            </StackPanel.Background>
+                            <ItemsControl ItemTemplate="{StaticResource CommonLiveMatchTemplate}" ItemsSource="{Binding VolleyballMatches}" />
+                        </StackPanel>
+                    </Border>
+                </Expander>
+
+
+
+            </StackPanel>
+        </ScrollViewer>
+
+
+        <!--<ListView Name="Matches"
+                  Grid.Row="1"
+                  HorizontalAlignment="Stretch"
+                  HorizontalContentAlignment="Stretch"
+                  AlternationCount="30000"
+                  BorderBrush="Black"
+                  BorderThickness="0"
+                  ItemTemplate="{DynamicResource CommonLiveMatchTemplate}"
+                  ItemsSource="{Binding Matches}"
+                  ScrollViewer.CanContentScroll="True"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                  VirtualizingPanel.ScrollUnit="Pixel"
+                  VirtualizingStackPanel.IsVirtualizing="True"
+                  VirtualizingStackPanel.VirtualizationMode="Recycling">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="LayoutUpdated">
+                    <i:InvokeCommandAction Command="{Binding ListCreated}" CommandParameter="{Binding ElementName=Matches}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+
+        -->
+        <!--<ItemsControl.ItemTemplate>
+                <DataTemplate>
+                <Button Name="Match"  Content="{Binding Name}" />
+                </DataTemplate>
+                </ItemsControl.ItemTemplate>-->
+        <!--
+
+            <ListView.Template>
+                <ControlTemplate TargetType="ListView">
+                    <Border Background="Transparent"
+                            BorderBrush="{TemplateBinding Border.BorderBrush}"
+                            BorderThickness="{TemplateBinding Border.BorderThickness}"
+                            Padding="{TemplateBinding Control.Padding}"
+                            SnapsToDevicePixels="True">
+                        <ScrollViewer x:Name="ScrollViewer"
+                                      CanContentScroll="True"
+                                      PanningMode="VerticalOnly"
+                                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                      Template="{shared:ResourceResolver ResourceKey=secondVisibleScrollView}">
+
+                                <ItemsPresenter SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
+
+
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="ScrollChanged">
+                                    <i:InvokeCommandAction Command="{Binding ScrollChangedCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ScrollViewer}}, Path=ContentVerticalOffset}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ScrollViewer>
+                    </Border>
+                </ControlTemplate>
+            </ListView.Template>
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <VirtualizingStackPanel Name="VPanel" />
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+        </ListView>-->
+
+    </Grid>
+</UserControl>
